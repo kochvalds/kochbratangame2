@@ -1,8 +1,18 @@
 package com.looxmaksing.simulator.model
 
 enum class BusinessCategory {
-    RETAIL, HOSPITALITY, BANKING, CONSTRUCTION, TECH, AEROSPACE
+    AUTOMOTIVE, RETAIL, HOSPITALITY, BANKING, CONSTRUCTION, TECH, AEROSPACE
 }
+
+data class BusinessSubAction(
+    val id: String,
+    val title: String,
+    val desc: String,
+    val cost: Long,
+    val revenueBonus: Long,
+    val isUnlocked: Boolean,
+    val type: String
+)
 
 data class Business(
     val id: String,
@@ -19,7 +29,10 @@ data class Business(
     val employees: Int,
     val marketingLevel: Int,
     val techLevel: Int,
-    val hrLevel: Int
+    val hrLevel: Int,
+    val specialMetricName: String,
+    val specialMetricValue: String,
+    val subActions: List<BusinessSubAction>
 )
 
 data class CarConditions(
@@ -84,7 +97,8 @@ data class StockAsset(
     val prevPrice: Double,
     val sharesOwned: Long,
     val history: List<Double>,
-    val dividendYield: Double
+    val dividendYield: Double,
+    val marketCap: String
 )
 
 data class CryptoAsset(
@@ -94,7 +108,8 @@ data class CryptoAsset(
     val prevPrice: Double,
     val amountOwned: Double,
     val history: List<Double>,
-    val volatility: Double
+    val volatility: Double,
+    val marketCap: String
 )
 
 data class RealEstateProperty(
@@ -125,6 +140,19 @@ data class LuxuryCollectionItem(
     val tagline: String
 )
 
+data class TaxSystemState(
+    val corporateTaxRate: Double = 0.20,
+    val effectiveTaxRate: Double = 0.20,
+    val accumulatedTaxDue: Long = 0L,
+    val totalTaxPaid: Long = 0L,
+    val totalTaxSaved: Long = 0L,
+    val offshoreAccountantsHired: Boolean = false,
+    val monacoTrustRegistered: Boolean = false,
+    val swissZugHoldingSetup: Boolean = false,
+    val auditRiskPercent: Int = 5,
+    val autoPayTaxes: Boolean = false
+)
+
 data class PrivateClubPerk(
     val id: String,
     val title: String,
@@ -132,11 +160,4 @@ data class PrivateClubPerk(
     val cost: Long,
     val isPurchased: Boolean,
     val multiplier: Double
-)
-
-data class GameNotification(
-    val id: String,
-    val title: String,
-    val message: String,
-    val time: String
 )

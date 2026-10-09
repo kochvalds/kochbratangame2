@@ -6,10 +6,59 @@ import {
   CryptoAsset,
   RealEstateProperty,
   LuxuryCollectionItem,
-  PrivateClubPerk
+  PrivateClubPerk,
+  TaxSystemState,
+  CandleDataPoint
 } from '../types/game';
+import { EXPANDED_50_CARS } from './expandedCars';
+import { EXPANDED_300_REAL_ESTATE } from './expandedRealEstate';
+
+function generateInitialCandles(basePrice: number, count = 24): CandleDataPoint[] {
+  const points: CandleDataPoint[] = [];
+  let current = basePrice * 0.85;
+
+  for (let i = 0; i < count; i++) {
+    const change = (Math.random() * 0.06 - 0.028);
+    const open = current;
+    const close = Number((open * (1 + change)).toFixed(2));
+    const high = Number((Math.max(open, close) * (1 + Math.random() * 0.018)).toFixed(2));
+    const low = Number((Math.min(open, close) * (1 - Math.random() * 0.018)).toFixed(2));
+    const volume = Math.round(15000 + Math.random() * 85000);
+    const time = `${(i + 1).toString().padStart(2, '0')}:00`;
+
+    points.push({ time, open, high, low, close, volume });
+    current = close;
+  }
+  return points;
+}
 
 export const INITIAL_BUSINESSES: Business[] = [
+  {
+    id: 'biz_dealership',
+    name: 'Apex Motors — Автодилер & Реставрация',
+    category: 'AUTOMOTIVE',
+    categoryName: 'Автодилерский Центр',
+    description: 'Покупка битых и подержанных спорткаров с аукционов, диагностика, ремонт и перепродажа с высокой маржой.',
+    level: 0,
+    unlocked: false,
+    unlockCost: 40000,
+    valuation: 95000,
+    monthlyRevenue: 12500,
+    monthlyExpenses: 4200,
+    employees: 8,
+    marketingLevel: 1,
+    techLevel: 1,
+    hrLevel: 1,
+    iconName: 'Car',
+    specialMetricName: 'Боксов в сервисе',
+    specialMetricValue: '4 подъемника',
+    subActions: [
+      { id: 'act_auto_1', title: 'Гидравлические подъемники Hunter', desc: 'Ускоряет диагностику ходовой части на 50%', cost: 12000, revenueBonus: 2800, isUnlocked: false, type: 'EQUIPMENT' },
+      { id: 'act_auto_2', title: 'Покрасочная камера Nova Verta', desc: 'Заводское качество покраски кузова, +20% к продажной цене авто', cost: 24000, revenueBonus: 5400, isUnlocked: false, type: 'WORKSHOP' },
+      { id: 'act_auto_3', title: 'Чип-тюнинг стенд Dyno Dynamics', desc: 'Стейдж 1 и 2 прошивки для форсирования двигателей', cost: 45000, revenueBonus: 9800, isUnlocked: false, type: 'TUNING' },
+      { id: 'act_auto_4', title: 'Эксклюзивный VIP-шоурум в Дубае', desc: 'Выход на шейхов и коллекционеров редких суперкаров', cost: 120000, revenueBonus: 28000, isUnlocked: false, type: 'SHOWROOM' }
+    ]
+  },
   {
     id: 'biz_retail',
     name: 'Atelier Aurelia & Luxury Retail',
@@ -20,13 +69,20 @@ export const INITIAL_BUSINESSES: Business[] = [
     unlocked: true,
     unlockCost: 0,
     valuation: 85000,
-    monthlyRevenue: 6200,
-    monthlyExpenses: 2800,
-    employees: 12,
+    monthlyRevenue: 8200,
+    monthlyExpenses: 3400,
+    employees: 14,
     marketingLevel: 1,
     techLevel: 1,
     hrLevel: 1,
-    iconName: 'ShoppingBag'
+    iconName: 'ShoppingBag',
+    specialMetricName: 'Торговая площадь',
+    specialMetricValue: '850 м²',
+    subActions: [
+      { id: 'act_ret_1', title: 'Линия Haute Couture Осень-Зима', desc: 'Запуск эксклюзивной коллекции из кашемира и шелка', cost: 15000, revenueBonus: 3500, isUnlocked: false, type: 'COLLECTION' },
+      { id: 'act_ret_2', title: 'Ювелирный отдел редких бриллиантов', desc: 'Прямые поставки ограненных камней из Антверпена', cost: 45000, revenueBonus: 9500, isUnlocked: false, type: 'JEWELRY' },
+      { id: 'act_ret_3', title: 'Флагманский бутик на Via Montenapoleone', desc: 'Премиальное присутствие в сердце мировой моды', cost: 110000, revenueBonus: 24000, isUnlocked: false, type: 'EXPANSION' }
+    ]
   },
   {
     id: 'biz_hospitality',
@@ -38,17 +94,24 @@ export const INITIAL_BUSINESSES: Business[] = [
     unlocked: false,
     unlockCost: 150000,
     valuation: 450000,
-    monthlyRevenue: 28500,
-    monthlyExpenses: 14200,
-    employees: 48,
+    monthlyRevenue: 34000,
+    monthlyExpenses: 15000,
+    employees: 52,
     marketingLevel: 1,
     techLevel: 1,
     hrLevel: 1,
-    iconName: 'Utensils'
+    iconName: 'Utensils',
+    specialMetricName: 'Звезд Michelin',
+    specialMetricValue: '3 Звезды ★★★',
+    subActions: [
+      { id: 'act_hosp_1', title: 'Приглашение Шеф-повара из Лиона', desc: 'Авторское дегустационное меню с трюфелями и фуа-гра', cost: 35000, revenueBonus: 7800, isUnlocked: false, type: 'CHEF' },
+      { id: 'act_hosp_2', title: 'Винный погреб с коллекционными винтажами', desc: 'Романе-Конти и Шато Петрюс 1982 года в винной карте', cost: 75000, revenueBonus: 16000, isUnlocked: false, type: 'WINE' },
+      { id: 'act_hosp_3', title: 'Частный инфинити-пляж в Сен-Тропе', desc: 'Закрытый клуб для гостей президентских люксов', cost: 220000, revenueBonus: 48000, isUnlocked: false, type: 'BEACH' }
+    ]
   },
   {
     id: 'biz_banking',
-    name: 'Zurich Private Merchant Bank',
+    name: 'Zurich Private Merchant Bank & Quants',
     category: 'BANKING',
     categoryName: 'Банкинг & Хедж-фонды',
     description: 'Швейцарский приватный банк и квантовый хедж-фонд для ультрабогатых клиентов.',
@@ -56,13 +119,20 @@ export const INITIAL_BUSINESSES: Business[] = [
     unlocked: false,
     unlockCost: 750000,
     valuation: 2800000,
-    monthlyRevenue: 135000,
-    monthlyExpenses: 52000,
-    employees: 85,
+    monthlyRevenue: 155000,
+    monthlyExpenses: 58000,
+    employees: 92,
     marketingLevel: 1,
     techLevel: 1,
     hrLevel: 1,
-    iconName: 'Building2'
+    iconName: 'Building2',
+    specialMetricName: 'Активы под управлением (AUM)',
+    specialMetricValue: '$1.4 Миллиарда',
+    subActions: [
+      { id: 'act_bank_1', title: 'Квантовый торговый алгоритм Chronos', desc: 'Высокочастотный арбитраж на мировых биржах', cost: 140000, revenueBonus: 32000, isUnlocked: false, type: 'QUANT' },
+      { id: 'act_bank_2', title: 'Синдицированное кредитование олигархов', desc: 'Выдача кредитов под залог суперяхт и пентхаусов', cost: 380000, revenueBonus: 75000, isUnlocked: false, type: 'LOAN' },
+      { id: 'act_bank_3', title: 'Офшорный Prime Brokerage в Женеве', desc: 'Обслуживание закрытых суверенных фондов', cost: 950000, revenueBonus: 190000, isUnlocked: false, type: 'PRIME' }
+    ]
   },
   {
     id: 'biz_construction',
@@ -74,13 +144,20 @@ export const INITIAL_BUSINESSES: Business[] = [
     unlocked: false,
     unlockCost: 2500000,
     valuation: 9500000,
-    monthlyRevenue: 480000,
-    monthlyExpenses: 190000,
-    employees: 320,
+    monthlyRevenue: 520000,
+    monthlyExpenses: 210000,
+    employees: 340,
     marketingLevel: 1,
     techLevel: 1,
     hrLevel: 1,
-    iconName: 'Hammer'
+    iconName: 'Hammer',
+    specialMetricName: 'Текущих проектов',
+    specialMetricValue: '12 небоскребов',
+    subActions: [
+      { id: 'act_const_1', title: 'Парк тяжелых башенных кранов Liebherr', desc: 'Снижает сроки возведения монолитных каркасов на 30%', cost: 420000, revenueBonus: 95000, isUnlocked: false, type: 'CRANES' },
+      { id: 'act_const_2', title: 'Тендер на 80-этажный небоскреб в Дубае', desc: 'Генеральный подряд на проект стоимостью $450M', cost: 1100000, revenueBonus: 220000, isUnlocked: false, type: 'TENDER' },
+      { id: 'act_const_3', title: 'Искусственный насыпной остров в Катаре', desc: 'Строительство закрытой марины для суперяхт', cost: 2800000, revenueBonus: 580000, isUnlocked: false, type: 'ISLAND' }
+    ]
   },
   {
     id: 'biz_tech',
@@ -92,13 +169,20 @@ export const INITIAL_BUSINESSES: Business[] = [
     unlocked: false,
     unlockCost: 8000000,
     valuation: 35000000,
-    monthlyRevenue: 1650000,
-    monthlyExpenses: 620000,
-    employees: 450,
+    monthlyRevenue: 1850000,
+    monthlyExpenses: 680000,
+    employees: 480,
     marketingLevel: 1,
     techLevel: 1,
     hrLevel: 1,
-    iconName: 'Cpu'
+    iconName: 'Cpu',
+    specialMetricName: 'Вычислительный кластер',
+    specialMetricValue: '64,000x Nvidia B200',
+    subActions: [
+      { id: 'act_tech_1', title: 'Суперкластер Nvidia Blackwell GPU', desc: 'Обучение новейшей мультимодальной нейросети Synapse-4', cost: 1400000, revenueBonus: 310000, isUnlocked: false, type: 'GPU' },
+      { id: 'act_tech_2', title: 'Корпоративный контракт с Пентагоном и NASA', desc: 'Автономный анализ спутниковых данных в реальном времени', cost: 3200000, revenueBonus: 690000, isUnlocked: false, type: 'DEFENSE' },
+      { id: 'act_tech_3', title: 'Квантовый криптопроцессор Q-Shield', desc: 'Абсолютная невзламываемая квантовая шифрация', cost: 7500000, revenueBonus: 1550000, isUnlocked: false, type: 'QUANTUM' }
+    ]
   },
   {
     id: 'biz_aerospace',
@@ -110,194 +194,24 @@ export const INITIAL_BUSINESSES: Business[] = [
     unlocked: false,
     unlockCost: 25000000,
     valuation: 120000000,
-    monthlyRevenue: 5400000,
-    monthlyExpenses: 2100000,
-    employees: 850,
+    monthlyRevenue: 5800000,
+    monthlyExpenses: 2250000,
+    employees: 890,
     marketingLevel: 1,
     techLevel: 1,
     hrLevel: 1,
-    iconName: 'Rocket'
+    iconName: 'Rocket',
+    specialMetricName: 'Успешных орбитальных миссий',
+    specialMetricValue: '28 запусков',
+    subActions: [
+      { id: 'act_aero_1', title: 'Метановые двигатели многоразового пуска', desc: 'Снижает себестоимость вывода полезной нагрузки в 4 раза', cost: 4500000, revenueBonus: 980000, isUnlocked: false, type: 'ENGINE' },
+      { id: 'act_aero_2', title: 'Коммерческий орбитальный отель Aether-1', desc: 'Туристические билеты на 7 дней на орбите по $55M каждый', cost: 12000000, revenueBonus: 2600000, isUnlocked: false, type: 'HOTEL' },
+      { id: 'act_aero_3', title: 'Миссия к астероиду Психея 16 (Добыча платины)', desc: 'Дроны для бурения редкоземельных металлов в космосе', cost: 28000000, revenueBonus: 6200000, isUnlocked: false, type: 'MINING' }
+    ]
   }
 ];
 
-export const INITIAL_DEALERSHIP_CARS: DealershipCar[] = [
-  {
-    id: 'car_bmw_m3',
-    brand: 'BMW',
-    model: 'M3 Competition (G80)',
-    year: 2022,
-    horsePower: 510,
-    zeroToHundred: '3.5s',
-    topSpeed: 290,
-    boughtPrice: 38000,
-    currentValue: 38000,
-    repairCostTotal: 0,
-    isOwned: false,
-    conditions: {
-      engine: 45,
-      transmission: 60,
-      suspension: 35,
-      bodywork: 50,
-      interior: 40
-    },
-    tunedStage: 0,
-    detailLevel: 0
-  },
-  {
-    id: 'car_audi_rs6',
-    brand: 'Audi',
-    model: 'RS6 Avant Quattro',
-    year: 2021,
-    horsePower: 600,
-    zeroToHundred: '3.6s',
-    topSpeed: 305,
-    boughtPrice: 52000,
-    currentValue: 52000,
-    repairCostTotal: 0,
-    isOwned: false,
-    conditions: {
-      engine: 35,
-      transmission: 40,
-      suspension: 55,
-      bodywork: 45,
-      interior: 60
-    },
-    tunedStage: 0,
-    detailLevel: 0
-  },
-  {
-    id: 'car_amg_c63',
-    brand: 'Mercedes-AMG',
-    model: 'C63 S V8 BiTurbo',
-    year: 2020,
-    horsePower: 503,
-    zeroToHundred: '3.9s',
-    topSpeed: 290,
-    boughtPrice: 42000,
-    currentValue: 42000,
-    repairCostTotal: 0,
-    isOwned: false,
-    conditions: {
-      engine: 50,
-      transmission: 65,
-      suspension: 40,
-      bodywork: 60,
-      interior: 50
-    },
-    tunedStage: 0,
-    detailLevel: 0
-  },
-  {
-    id: 'car_porsche_911',
-    brand: 'Porsche',
-    model: '911 Carrera S (992)',
-    year: 2022,
-    horsePower: 450,
-    zeroToHundred: '3.5s',
-    topSpeed: 308,
-    boughtPrice: 65000,
-    currentValue: 65000,
-    repairCostTotal: 0,
-    isOwned: false,
-    conditions: {
-      engine: 60,
-      transmission: 55,
-      suspension: 50,
-      bodywork: 40,
-      interior: 45
-    },
-    tunedStage: 0,
-    detailLevel: 0
-  },
-  {
-    id: 'car_nissan_gtr',
-    brand: 'Nissan',
-    model: 'GT-R Nismo (R35)',
-    year: 2021,
-    horsePower: 600,
-    zeroToHundred: '2.8s',
-    topSpeed: 330,
-    boughtPrice: 78000,
-    currentValue: 78000,
-    repairCostTotal: 0,
-    isOwned: false,
-    conditions: {
-      engine: 40,
-      transmission: 50,
-      suspension: 45,
-      bodywork: 55,
-      interior: 50
-    },
-    tunedStage: 0,
-    detailLevel: 0
-  },
-  {
-    id: 'car_ferrari_458',
-    brand: 'Ferrari',
-    model: '458 Italia',
-    year: 2015,
-    horsePower: 570,
-    zeroToHundred: '3.4s',
-    topSpeed: 325,
-    boughtPrice: 115000,
-    currentValue: 115000,
-    repairCostTotal: 0,
-    isOwned: false,
-    conditions: {
-      engine: 55,
-      transmission: 45,
-      suspension: 40,
-      bodywork: 35,
-      interior: 45
-    },
-    tunedStage: 0,
-    detailLevel: 0
-  },
-  {
-    id: 'car_huracan',
-    brand: 'Lamborghini',
-    model: 'Huracán EVO V10',
-    year: 2022,
-    horsePower: 640,
-    zeroToHundred: '2.9s',
-    topSpeed: 325,
-    boughtPrice: 145000,
-    currentValue: 145000,
-    repairCostTotal: 0,
-    isOwned: false,
-    conditions: {
-      engine: 60,
-      transmission: 50,
-      suspension: 50,
-      bodywork: 40,
-      interior: 60
-    },
-    tunedStage: 0,
-    detailLevel: 0
-  },
-  {
-    id: 'car_gt3rs',
-    brand: 'Porsche',
-    model: '911 GT3 RS Weissach',
-    year: 2023,
-    horsePower: 525,
-    zeroToHundred: '3.2s',
-    topSpeed: 296,
-    boughtPrice: 220000,
-    currentValue: 220000,
-    repairCostTotal: 0,
-    isOwned: false,
-    conditions: {
-      engine: 70,
-      transmission: 60,
-      suspension: 60,
-      bodywork: 45,
-      interior: 65
-    },
-    tunedStage: 0,
-    detailLevel: 0
-  }
-];
+export const INITIAL_DEALERSHIP_CARS: DealershipCar[] = EXPANDED_50_CARS;
 
 export const INITIAL_FOOTBALL_CLUB: FootballClub = {
   name: 'FC Looxmaksing Royals',
@@ -331,324 +245,70 @@ export const INITIAL_FOOTBALL_CLUB: FootballClub = {
 };
 
 export const INITIAL_STOCKS: StockAsset[] = [
-  { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Технологии', price: 232.50, prevPrice: 228.10, sharesOwned: 0, history: [215, 220, 224, 228, 232.5], dividendYield: 0.5 },
-  { symbol: 'NVDA', name: 'NVIDIA Corp.', sector: 'AI & Полупроводники', price: 141.20, prevPrice: 136.80, sharesOwned: 0, history: [120, 128, 133, 136.8, 141.2], dividendYield: 0.2 },
-  { symbol: 'TSLA', name: 'Tesla Motors', sector: 'Электромобили & Роботы', price: 245.80, prevPrice: 240.00, sharesOwned: 0, history: [220, 230, 235, 240, 245.8], dividendYield: 0.0 },
-  { symbol: 'MSFT', name: 'Microsoft Corp.', sector: 'Облачные технологии', price: 430.10, prevPrice: 426.50, sharesOwned: 0, history: [410, 418, 422, 426.5, 430.1], dividendYield: 0.7 },
-  { symbol: 'AMZN', name: 'Amazon.com Inc.', sector: 'Электронная коммерция', price: 188.40, prevPrice: 185.00, sharesOwned: 0, history: [175, 179, 182, 185, 188.4], dividendYield: 0.0 },
-  { symbol: 'RACE', name: 'Ferrari N.V.', sector: 'Люксовые суперкары', price: 448.60, prevPrice: 440.20, sharesOwned: 0, history: [420, 428, 435, 440.2, 448.6], dividendYield: 0.6 },
-  { symbol: 'MC', name: 'LVMH Moët Hennessy', sector: 'Люксовая империя', price: 685.00, prevPrice: 672.00, sharesOwned: 0, history: [650, 660, 668, 672, 685], dividendYield: 1.8 },
-  { symbol: 'RKLB', name: 'Rocket Lab Aerospace', sector: 'Космос', price: 22.40, prevPrice: 20.80, sharesOwned: 0, history: [16, 18, 19.5, 20.8, 22.4], dividendYield: 0.0 }
+  { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Технологии', price: 232.50, prevPrice: 228.10, sharesOwned: 0, history: [215, 220, 224, 228, 232.5], candles: generateInitialCandles(232.5), dividendYield: 0.5, marketCap: '$3.55T', high52w: 237.2, low52w: 164.0 },
+  { symbol: 'NVDA', name: 'NVIDIA Corp.', sector: 'AI & Полупроводники', price: 141.20, prevPrice: 136.80, sharesOwned: 0, history: [120, 128, 133, 136.8, 141.2], candles: generateInitialCandles(141.2), dividendYield: 0.2, marketCap: '$3.46T', high52w: 149.7, low52w: 45.4 },
+  { symbol: 'TSLA', name: 'Tesla Motors', sector: 'Электромобили & Роботы', price: 245.80, prevPrice: 240.00, sharesOwned: 0, history: [220, 230, 235, 240, 245.8], candles: generateInitialCandles(245.8), dividendYield: 0.0, marketCap: '$785B', high52w: 271.0, low52w: 138.8 },
+  { symbol: 'MSFT', name: 'Microsoft Corp.', sector: 'Облачные технологии', price: 430.10, prevPrice: 426.50, sharesOwned: 0, history: [410, 418, 422, 426.5, 430.1], candles: generateInitialCandles(430.1), dividendYield: 0.7, marketCap: '$3.19T', high52w: 468.3, low52w: 326.9 },
+  { symbol: 'AMZN', name: 'Amazon.com Inc.', sector: 'Электронная коммерция', price: 188.40, prevPrice: 185.00, sharesOwned: 0, history: [175, 179, 182, 185, 188.4], candles: generateInitialCandles(188.4), dividendYield: 0.0, marketCap: '$1.97T', high52w: 201.2, low52w: 118.3 },
+  { symbol: 'RACE', name: 'Ferrari N.V.', sector: 'Люксовые суперкары', price: 448.60, prevPrice: 440.20, sharesOwned: 0, history: [420, 428, 435, 440.2, 448.6], candles: generateInitialCandles(448.6), dividendYield: 0.6, marketCap: '$81.4B', high52w: 472.0, low52w: 295.4 },
+  { symbol: 'MC', name: 'LVMH Moët Hennessy', sector: 'Люксовая империя', price: 685.00, prevPrice: 672.00, sharesOwned: 0, history: [650, 660, 668, 672, 685], candles: generateInitialCandles(685.0), dividendYield: 1.8, marketCap: '$342B', high52w: 886.0, low52w: 590.2 },
+  { symbol: 'RKLB', name: 'Rocket Lab Aerospace', sector: 'Космос', price: 22.40, prevPrice: 20.80, sharesOwned: 0, history: [16, 18, 19.5, 20.8, 22.4], candles: generateInitialCandles(22.4), dividendYield: 0.0, marketCap: '$11.2B', high52w: 24.8, low52w: 3.5 }
 ];
 
 export const INITIAL_CRYPTOS: CryptoAsset[] = [
-  { symbol: 'BTC', name: 'Bitcoin', price: 96400, prevPrice: 94200, amountOwned: 0, history: [88000, 91500, 93000, 94200, 96400], volatility: 0.06 },
-  { symbol: 'ETH', name: 'Ethereum', price: 3450, prevPrice: 3380, amountOwned: 0, history: [3100, 3250, 3320, 3380, 3450], volatility: 0.08 },
-  { symbol: 'SOL', name: 'Solana', price: 215, prevPrice: 202, amountOwned: 0, history: [180, 192, 198, 202, 215], volatility: 0.11 },
-  { symbol: 'DOGE', name: 'Dogecoin', price: 0.38, prevPrice: 0.35, amountOwned: 0, history: [0.28, 0.31, 0.33, 0.35, 0.38], volatility: 0.16 },
-  { symbol: 'LOOX', name: 'LooxCoin (Mogger Token)', price: 4.85, prevPrice: 4.20, amountOwned: 0, history: [2.5, 3.1, 3.8, 4.2, 4.85], volatility: 0.22 }
+  { symbol: 'BTC', name: 'Bitcoin', price: 96400, prevPrice: 94200, amountOwned: 0, history: [88000, 91500, 93000, 94200, 96400], candles: generateInitialCandles(96400), volatility: 0.06, marketCap: '$1.91T', high24h: 98200, low24h: 93800 },
+  { symbol: 'ETH', name: 'Ethereum', price: 3450, prevPrice: 3380, amountOwned: 0, history: [3100, 3250, 3320, 3380, 3450], candles: generateInitialCandles(3450), volatility: 0.08, marketCap: '$415B', high24h: 3520, low24h: 3320 },
+  { symbol: 'SOL', name: 'Solana', price: 215, prevPrice: 202, amountOwned: 0, history: [180, 192, 198, 202, 215], candles: generateInitialCandles(215), volatility: 0.11, marketCap: '$102B', high24h: 224, low24h: 198 },
+  { symbol: 'DOGE', name: 'Dogecoin', price: 0.38, prevPrice: 0.35, amountOwned: 0, history: [0.28, 0.31, 0.33, 0.35, 0.38], candles: generateInitialCandles(0.38), volatility: 0.16, marketCap: '$55B', high24h: 0.42, low24h: 0.33 },
+  { symbol: 'LOOX', name: 'LooxCoin (Mogger Token)', price: 4.85, prevPrice: 4.20, amountOwned: 0, history: [2.5, 3.1, 3.8, 4.2, 4.85], candles: generateInitialCandles(4.85), volatility: 0.22, marketCap: '$485M', high24h: 5.60, low24h: 3.90 }
 ];
 
-export const INITIAL_REAL_ESTATE: RealEstateProperty[] = [
-  {
-    id: 'prop_dubai',
-    name: 'Palm Jumeirah Signature Beachfront Villa',
-    location: 'Palm Jumeirah, Frond N',
-    city: 'Дубай, ОАЭ',
-    price: 8500000,
-    monthlyRentalYield: 52000,
-    appreciationRate: 0.07,
-    isOwned: false,
-    imageTag: 'Villa',
-    description: 'Частный пляж, вертолетная площадка, бассейн инфинити с видом на дубайский скайлайн.'
-  },
-  {
-    id: 'prop_nyc',
-    name: '432 Park Avenue Full-Floor Penthouse',
-    location: 'Manhattan, Billionaires Row',
-    city: 'Нью-Йорк, США',
-    price: 18500000,
-    monthlyRentalYield: 98000,
-    appreciationRate: 0.05,
-    isOwned: false,
-    imageTag: 'Penthouse',
-    description: 'Панорама Центрального парка на 360 градусов, потолки 4.5м, отделка каррарским мрамором.'
-  },
-  {
-    id: 'prop_monaco',
-    name: 'Tour Odéon Sky Duplex overlooking Port Hercule',
-    location: 'Avenue Princesse Grace',
-    city: 'Монте-Карло, Монако',
-    price: 26000000,
-    monthlyRentalYield: 135000,
-    appreciationRate: 0.04,
-    isOwned: false,
-    imageTag: 'Sky Duplex',
-    description: 'Вид на гавань суперяхт и трассу Формулы-1, доступ к спа-комплексу и консьерж-сервису 24/7.'
-  },
-  {
-    id: 'prop_london',
-    name: 'Mayfair Heritage Georgian Palace',
-    location: 'Grosvenor Square, Mayfair',
-    city: 'Лондон, Великобритания',
-    price: 34000000,
-    monthlyRentalYield: 180000,
-    appreciationRate: 0.045,
-    isOwned: false,
-    imageTag: 'Mansion',
-    description: 'Исторический особняк с бальным залом, винным погребом на 5,000 бутылок и подземным гаражом.'
-  },
-  {
-    id: 'prop_alps',
-    name: 'St. Moritz Suvretta Luxury Alpine Chalet',
-    location: 'Suvretta Hill',
-    city: 'Санкт-Мориц, Швейцария',
-    price: 14500000,
-    monthlyRentalYield: 82000,
-    appreciationRate: 0.06,
-    isOwned: false,
-    imageTag: 'Chalet',
-    description: 'Прямой выезд на лыжные трассы, частный кинотеатр, термальный спа и сосновый массив.'
-  },
-  {
-    id: 'prop_tokyo',
-    name: 'Roppongi Hills Sky Sanctuary',
-    location: 'Minato City, Roppongi',
-    city: 'Токио, Япония',
-    price: 12000000,
-    monthlyRentalYield: 65000,
-    appreciationRate: 0.055,
-    isOwned: false,
-    imageTag: 'Sky Villa',
-    description: 'Двухуровневый пентхаус с японским садом на крыше и видом на Токийскую башню и гору Фудзи.'
-  }
-];
+export const INITIAL_REAL_ESTATE: RealEstateProperty[] = EXPANDED_300_REAL_ESTATE;
 
 export const INITIAL_LUXURY_ITEMS: LuxuryCollectionItem[] = [
-  // Supercars
-  {
-    id: 'lux_car_gt3rs',
-    type: 'CAR',
-    name: 'Porsche 911 GT3 RS (992)',
-    specs: '525 л.с. · Атмосферный 4.0L Boxer · 0-100: 3.2с',
-    price: 360000,
-    prestigePoints: 4200,
-    monthlyUpkeep: 2500,
-    isOwned: false,
-    topSpeedOrFeature: '296 км/ч',
-    tagline: 'Трековый шедевр из Штутгарта с активным аэрокрылом DRS.'
-  },
-  {
-    id: 'lux_car_g63',
-    type: 'CAR',
-    name: 'Mercedes-AMG G63 Mansory Gronos',
-    specs: '850 л.с. · V8 4.0L BiTurbo · Кованый карбон',
-    price: 490000,
-    prestigePoints: 5800,
-    monthlyUpkeep: 3200,
-    isOwned: false,
-    topSpeedOrFeature: '250 км/ч',
-    tagline: 'Абсолютный дорожный авторитет в эксклюзивном обвесе.'
-  },
-  {
-    id: 'lux_car_sf90',
-    type: 'CAR',
-    name: 'Ferrari SF90 Stradale Assetto Fiorano',
-    specs: '1,000 л.с. · V8 Hybrid AWD · 0-100: 2.5с',
-    price: 680000,
-    prestigePoints: 8500,
-    monthlyUpkeep: 4200,
-    isOwned: false,
-    topSpeedOrFeature: '340 км/ч',
-    tagline: 'Флагманский гибридный гиперкар из Маранелло.'
-  },
-  {
-    id: 'lux_car_revuelto',
-    type: 'CAR',
-    name: 'Lamborghini Revuelto V12 HPEV',
-    specs: '1,015 л.с. · 6.5L V12 + 3 Электромотора · 0-100: 2.5с',
-    price: 720000,
-    prestigePoints: 9200,
-    monthlyUpkeep: 4500,
-    isOwned: false,
-    topSpeedOrFeature: '350 км/ч',
-    tagline: 'Ревущий V12 новой эпохи Sant’Agata Bolognese.'
-  },
-  {
-    id: 'lux_car_phantom',
-    type: 'CAR',
-    name: 'Rolls-Royce Phantom VIII Extended',
-    specs: '571 л.с. · 6.75L V12 Twin-Turbo · Звездное небо',
-    price: 620000,
-    prestigePoints: 8900,
-    monthlyUpkeep: 3800,
-    isOwned: false,
-    topSpeedOrFeature: 'Бесшумный полет',
-    tagline: 'Вершина мирового представительского статуса и тишины.'
-  },
-  {
-    id: 'lux_car_chiron',
-    type: 'CAR',
-    name: 'Bugatti Chiron Super Sport 300+',
-    specs: '1,600 л.с. · 8.0L W16 Quad-Turbo · Кузов из карбона',
-    price: 4200000,
-    prestigePoints: 55000,
-    monthlyUpkeep: 18000,
-    isOwned: false,
-    topSpeedOrFeature: '440 км/ч',
-    tagline: 'Легендарный рекордсмен скорости и символ запредельного богатства.'
-  },
-  {
-    id: 'lux_car_jesko',
-    type: 'CAR',
-    name: 'Koenigsegg Jesko Absolut',
-    specs: '1,625 л.с. на E85 · 5.0L Twin-Turbo V8 · LST 9-ступка',
-    price: 3800000,
-    prestigePoints: 48000,
-    monthlyUpkeep: 16000,
-    isOwned: false,
-    topSpeedOrFeature: '500+ км/ч',
-    tagline: 'Шведская аэродинамическая ракета максимальной скорости.'
-  },
+  // Supercars & Hypercars
+  { id: 'lux_car_gt3rs', type: 'CAR', name: 'Porsche 911 GT3 RS Weissach (992)', specs: '525 л.с. · Атмосферный 4.0L Boxer · 0-100: 3.2с', price: 360000, prestigePoints: 4200, monthlyUpkeep: 2500, isOwned: false, topSpeedOrFeature: '296 км/ч', tagline: 'Трековый шедевр из Штутгарта с активным антикрылом DRS.' },
+  { id: 'lux_car_g63', type: 'CAR', name: 'Mercedes-AMG G63 Mansory Gronos', specs: '850 л.с. · V8 4.0L BiTurbo · Кованый карбон', price: 490000, prestigePoints: 5800, monthlyUpkeep: 3200, isOwned: false, topSpeedOrFeature: '250 км/ч', tagline: 'Абсолютный дорожный авторитет в эксклюзивном обвесе.' },
+  { id: 'lux_car_sf90', type: 'CAR', name: 'Ferrari SF90 Stradale Assetto Fiorano', specs: '1,000 л.с. · V8 Hybrid AWD · 0-100: 2.5с', price: 680000, prestigePoints: 8500, monthlyUpkeep: 4200, isOwned: false, topSpeedOrFeature: '340 км/ч', tagline: 'Флагманский гибридный гиперкар из Маранелло.' },
+  { id: 'lux_car_revuelto', type: 'CAR', name: 'Lamborghini Revuelto V12 HPEV', specs: '1,015 л.с. · 6.5L V12 + 3 Электромотора · 0-100: 2.5с', price: 720000, prestigePoints: 9200, monthlyUpkeep: 4500, isOwned: false, topSpeedOrFeature: '350 км/ч', tagline: 'Ревущий V12 новой эпохи Sant’Agata Bolognese.' },
+  { id: 'lux_car_phantom', type: 'CAR', name: 'Rolls-Royce Phantom VIII Extended', specs: '571 л.с. · 6.75L V12 Twin-Turbo · Звездное небо', price: 620000, prestigePoints: 8900, monthlyUpkeep: 3800, isOwned: false, topSpeedOrFeature: 'Бесшумный полет', tagline: 'Вершина мирового представительского статуса и тишины.' },
+  { id: 'lux_car_chiron', type: 'CAR', name: 'Bugatti Chiron Super Sport 300+', specs: '1,600 л.с. · 8.0L W16 Quad-Turbo · Кузов из карбона', price: 4200000, prestigePoints: 55000, monthlyUpkeep: 18000, isOwned: false, topSpeedOrFeature: '490 км/ч', tagline: 'Легендарный рекордсмен скорости и символ запредельного богатства.' },
+  { id: 'lux_car_jesko', type: 'CAR', name: 'Koenigsegg Jesko Absolut 500+ Edition', specs: '1,625 л.с. на E85 · 5.0L Twin-Turbo V8 · LST 9-ступка', price: 3800000, prestigePoints: 48000, monthlyUpkeep: 16000, isOwned: false, topSpeedOrFeature: '531 км/ч', tagline: 'Шведская аэродинамическая ракета максимальной скорости.' },
+  { id: 'lux_car_tourbillon', type: 'CAR', name: 'Bugatti Tourbillon V16 Hybrid', specs: '1,800 л.с. · Cosworth V16 Атмосферник · Титановые часы в руле', price: 4600000, prestigePoints: 62000, monthlyUpkeep: 22000, isOwned: false, topSpeedOrFeature: '445 км/ч', tagline: 'Новейший шедевр часового и автомобильного искусства.' },
 
   // Private Aviation
-  {
-    id: 'lux_jet_pilatus',
-    type: 'JET',
-    name: 'Pilatus PC-24 Super Versatile Jet',
-    specs: 'Дальность 3,700 км · Вместимость 8 чел · Посадка на грунт',
-    price: 11500000,
-    prestigePoints: 32000,
-    monthlyUpkeep: 35000,
-    isOwned: false,
-    topSpeedOrFeature: '815 км/ч',
-    tagline: 'Швейцарский бизнес-джет с возможностью посадки на любые полосы.'
-  },
-  {
-    id: 'lux_jet_g650',
-    type: 'JET',
-    name: 'Gulfstream G650ER Intercontinental',
-    specs: 'Дальность 13,890 км · 4 жилые зоны · Спутниковый Ka-band',
-    price: 68000000,
-    prestigePoints: 125000,
-    monthlyUpkeep: 95000,
-    isOwned: false,
-    topSpeedOrFeature: 'Mach 0.925',
-    tagline: 'Беспосадочный полет из Лондона в Сингапур в абсолютной роскоши.'
-  },
-  {
-    id: 'lux_jet_global7500',
-    type: 'JET',
-    name: 'Bombardier Global 7500 Master Suite',
-    specs: 'Дальность 14,260 км · Полноценная кровать Master Suite · Душ',
-    price: 76000000,
-    prestigePoints: 140000,
-    monthlyUpkeep: 110000,
-    isOwned: false,
-    topSpeedOrFeature: 'Mach 0.925',
-    tagline: 'Крупнейший и самый роскошный ультрадальний флагман бизнес-авиации.'
-  },
+  { id: 'lux_jet_pilatus', type: 'JET', name: 'Pilatus PC-24 Super Versatile Jet', specs: 'Дальность 3,700 км · Вместимость 8 чел · Посадка на грунт', price: 11500000, prestigePoints: 32000, monthlyUpkeep: 35000, isOwned: false, topSpeedOrFeature: '815 км/ч', tagline: 'Швейцарский бизнес-джет с возможностью посадки на любые полосы.' },
+  { id: 'lux_jet_g650', type: 'JET', name: 'Gulfstream G650ER Intercontinental', specs: 'Дальность 13,890 км · 4 жилые зоны · Спутниковый Ka-band', price: 68000000, prestigePoints: 125000, monthlyUpkeep: 95000, isOwned: false, topSpeedOrFeature: 'Mach 0.925', tagline: 'Беспосадочный полет из Лондона в Сингапур в абсолютной роскоши.' },
+  { id: 'lux_jet_global7500', type: 'JET', name: 'Bombardier Global 7500 Master Suite', specs: 'Дальность 14,260 км · Полноценная кровать Master Suite · Душ', price: 76000000, prestigePoints: 140000, monthlyUpkeep: 110000, isOwned: false, topSpeedOrFeature: 'Mach 0.925', tagline: 'Крупнейший и самый роскошный ультрадальний флагман бизнес-авиации.' },
 
   // Yachts
-  {
-    id: 'lux_yacht_riva',
-    type: 'YACHT',
-    name: 'Riva 110 Dolcevita Flybridge',
-    specs: 'Длина 33.5м · 5 кают · Корпус из красного дерева и карбона',
-    price: 14800000,
-    prestigePoints: 42000,
-    monthlyUpkeep: 42000,
-    isOwned: false,
-    topSpeedOrFeature: '26 узлов',
-    tagline: 'Итальянская икона стиля на Лазурном берегу.'
-  },
-  {
-    id: 'lux_yacht_lurssen',
-    type: 'YACHT',
-    name: 'Lürssen 110m Megayacht Sovereign',
-    specs: 'Длина 110м · Вертолетный ангар · Спа-салон · Бассейн 12м',
-    price: 185000000,
-    prestigePoints: 350000,
-    monthlyUpkeep: 380000,
-    isOwned: false,
-    topSpeedOrFeature: 'Автономность 6,000 миль',
-    tagline: 'Плавучий дворец, заставляющий замирать гавани Монако и Сен-Тропе.'
-  },
+  { id: 'lux_yacht_riva', type: 'YACHT', name: 'Riva 110 Dolcevita Flybridge', specs: 'Длина 33.5м · 5 кают · Корпус из красного дерева и карбона', price: 14800000, prestigePoints: 42000, monthlyUpkeep: 42000, isOwned: false, topSpeedOrFeature: '26 узлов', tagline: 'Итальянская икона стиля на Лазурном берегу.' },
+  { id: 'lux_yacht_lurssen', type: 'YACHT', name: 'Lürssen 110m Megayacht Sovereign', specs: 'Длина 110м · Вертолетный ангар · Спа-салон · Бассейн 12м', price: 185000000, prestigePoints: 350000, monthlyUpkeep: 380000, isOwned: false, topSpeedOrFeature: 'Автономность 6,000 миль', tagline: 'Плавучий дворец, заставляющий замирать гавани Монако и Сен-Тропе.' },
 
   // Horology
-  {
-    id: 'lux_watch_daytona',
-    type: 'WATCH',
-    name: 'Rolex Cosmograph Daytona Platinum Ice Blue',
-    specs: 'Платина 950 · Калибр 4131 · Керамический безель Cerachrom',
-    price: 98000,
-    prestigePoints: 1600,
-    monthlyUpkeep: 200,
-    isOwned: false,
-    topSpeedOrFeature: 'Хронограф',
-    tagline: 'Культовый ледяно-голубой циферблат платиновой Daytona.'
-  },
-  {
-    id: 'lux_watch_nautilus',
-    type: 'WATCH',
-    name: 'Patek Philippe Nautilus 5711/1R Rose Gold',
-    specs: 'Розовое золото 18K · Калибр 26-330 S C · Водозащита 120м',
-    price: 175000,
-    prestigePoints: 2900,
-    monthlyUpkeep: 250,
-    isOwned: false,
-    topSpeedOrFeature: 'Ультратонкий корпус',
-    tagline: 'Вершина часового аристократизма от женевской мануфактуры.'
-  },
-  {
-    id: 'lux_watch_rm',
-    type: 'WATCH',
-    name: 'Richard Mille RM 11-03 Jean Todt Carbon TPT',
-    specs: 'Синий карбон TPT · Flyback-хронограф · Скелетонизированный титан',
-    price: 420000,
-    prestigePoints: 6800,
-    monthlyUpkeep: 500,
-    isOwned: false,
-    topSpeedOrFeature: 'Титановый сплит',
-    tagline: 'Гоночная машина на запястье самых влиятельных людей мира.'
-  }
+  { id: 'lux_watch_daytona', type: 'WATCH', name: 'Rolex Cosmograph Daytona Platinum Ice Blue', specs: 'Платина 950 · Калибр 4131 · Керамический безель Cerachrom', price: 98000, prestigePoints: 1600, monthlyUpkeep: 200, isOwned: false, topSpeedOrFeature: 'Хронограф', tagline: 'Культовый ледяно-голубой циферблат платиновой Daytona.' },
+  { id: 'lux_watch_nautilus', type: 'WATCH', name: 'Patek Philippe Nautilus 5711/1R Rose Gold', specs: 'Розовое золото 18K · Калибр 26-330 S C · Водозащита 120м', price: 175000, prestigePoints: 2900, monthlyUpkeep: 250, isOwned: false, topSpeedOrFeature: 'Ультратонкий корпус', tagline: 'Вершина часового аристократизма от женевской мануфактуры.' },
+  { id: 'lux_watch_rm', type: 'WATCH', name: 'Richard Mille RM 11-03 Jean Todt Carbon TPT', specs: 'Синий карбон TPT · Flyback-хронограф · Скелетонизированный титан', price: 420000, prestigePoints: 6800, monthlyUpkeep: 500, isOwned: false, topSpeedOrFeature: 'Титановый сплит', tagline: 'Гоночная машина на запястье самых влиятельных людей мира.' }
 ];
 
 export const INITIAL_PRIVATE_CLUB_PERKS: PrivateClubPerk[] = [
-  {
-    id: 'club_insider',
-    title: 'Инсайдерский канал Уолл-стрит & Цюриха',
-    description: 'Доступ к закрытым инсайдам: доходность акций и крипты возрастает на +25%, а риск падений снижается.',
-    cost: 500000,
-    isPurchased: false,
-    passiveBonusType: 'INSIDER_TRADING',
-    multiplier: 1.25
-  },
-  {
-    id: 'club_tax',
-    title: 'Офшорная оптимизация & Монакский траст',
-    description: 'Налоговые юристы сокращают все корпоративные расходы ваших компаний на 20%.',
-    cost: 1200000,
-    isPurchased: false,
-    passiveBonusType: 'TAX_CUT',
-    multiplier: 0.80
-  },
-  {
-    id: 'club_syndicate',
-    title: 'Венчурный синдикат ультрабогатых',
-    description: 'Синдикат направляет эксклюзивные сделки: выручка всех 6 категорий бизнеса увеличивается на +35%.',
-    cost: 3000000,
-    isPurchased: false,
-    passiveBonusType: 'REVENUE_BOOST',
-    multiplier: 1.35
-  },
-  {
-    id: 'club_gala',
-    title: 'Ежегодный закрытый бал в Монако & Престиж',
-    description: 'Членство в мировом совете миллиардеров умножает рост престижа и Mogger-статуса в 2 раза!',
-    cost: 7500000,
-    isPurchased: false,
-    passiveBonusType: 'PRESTIGE_MULTIPLIER',
-    multiplier: 2.0
-  }
+  { id: 'club_insider', title: 'Инсайдерский канал Уолл-стрит & Цюриха', description: 'Доступ к закрытым инсайдам: доходность акций и крипты возрастает на +25%, а риск падений снижается.', cost: 500000, isPurchased: false, passiveBonusType: 'INSIDER_TRADING', multiplier: 1.25 },
+  { id: 'club_tax', title: 'Офшорная оптимизация & Монакский траст', description: 'Налоговые юристы сокращают все корпоративные расходы ваших компаний на 20%.', cost: 1200000, isPurchased: false, passiveBonusType: 'TAX_CUT', multiplier: 0.80 },
+  { id: 'club_syndicate', title: 'Венчурный синдикат ультрабогатых', description: 'Синдикат направляет эксклюзивные сделки: выручка всех 7 категорий бизнеса увеличивается на +35%.', cost: 3000000, isPurchased: false, passiveBonusType: 'REVENUE_BOOST', multiplier: 1.35 },
+  { id: 'club_gala', title: 'Ежегодный закрытый бал в Монако & Престиж', description: 'Членство в мировом совете миллиардеров умножает рост престижа и Mogger-статуса в 2 раза!', cost: 7500000, isPurchased: false, passiveBonusType: 'PRESTIGE_MULTIPLIER', multiplier: 2.0 }
 ];
+
+export const INITIAL_TAX_SYSTEM: TaxSystemState = {
+  corporateTaxRate: 0.20,
+  wealthTaxRate: 0.015,
+  effectiveTaxRate: 0.20,
+  accumulatedTaxDue: 0,
+  totalTaxPaid: 0,
+  totalTaxSaved: 0,
+  offshoreAccountantsHired: false,
+  monacoTrustRegistered: false,
+  swissZugHoldingSetup: false,
+  auditRiskPercent: 5,
+  underAudit: false,
+  autoPayTaxes: false
+};

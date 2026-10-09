@@ -1,10 +1,21 @@
 export type BusinessCategory = 
+  | 'AUTOMOTIVE'
   | 'RETAIL' 
   | 'HOSPITALITY' 
   | 'BANKING' 
   | 'CONSTRUCTION' 
   | 'TECH' 
   | 'AEROSPACE';
+
+export interface BusinessSubAction {
+  id: string;
+  title: string;
+  desc: string;
+  cost: number;
+  revenueBonus: number;
+  isUnlocked: boolean;
+  type: string;
+}
 
 export interface Business {
   id: string;
@@ -23,6 +34,9 @@ export interface Business {
   techLevel: number;
   hrLevel: number;
   iconName: string;
+  specialMetricName: string;
+  specialMetricValue: string;
+  subActions: BusinessSubAction[];
 }
 
 export type CarConditionCategory = 'engine' | 'transmission' | 'suspension' | 'bodywork' | 'interior';
@@ -47,8 +61,8 @@ export interface DealershipCar {
     bodywork: number;      // 0-100%
     interior: number;      // 0-100%
   };
-  tunedStage: number; // 0, 1, 2
-  detailLevel: number; // 0, 1
+  tunedStage: number;
+  detailLevel: number;
 }
 
 export interface PlayerFootballer {
@@ -95,6 +109,15 @@ export interface MatchSimulation {
   resultBonus?: number;
 }
 
+export interface CandleDataPoint {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
 export interface StockAsset {
   symbol: string;
   name: string;
@@ -103,7 +126,11 @@ export interface StockAsset {
   prevPrice: number;
   sharesOwned: number;
   history: number[];
-  dividendYield: number; // annual %
+  candles: CandleDataPoint[];
+  dividendYield: number;
+  marketCap: string;
+  high52w: number;
+  low52w: number;
 }
 
 export interface CryptoAsset {
@@ -113,7 +140,11 @@ export interface CryptoAsset {
   prevPrice: number;
   amountOwned: number;
   history: number[];
+  candles: CandleDataPoint[];
   volatility: number;
+  marketCap: string;
+  high24h: number;
+  low24h: number;
 }
 
 export interface RealEstateProperty {
@@ -152,12 +183,19 @@ export interface PrivateClubPerk {
   multiplier: number;
 }
 
-export interface GameEventNotification {
-  id: string;
-  title: string;
-  message: string;
-  type: 'info' | 'success' | 'warning' | 'deal';
-  timestamp: string;
+export interface TaxSystemState {
+  corporateTaxRate: number;     // e.g. 0.20 (20%)
+  wealthTaxRate: number;        // e.g. 0.015 (1.5%)
+  effectiveTaxRate: number;     // calculated after deductions (e.g. 0.04)
+  accumulatedTaxDue: number;    // pending payment this month
+  totalTaxPaid: number;         // lifetime
+  totalTaxSaved: number;        // lifetime
+  offshoreAccountantsHired: boolean; // cuts 6%
+  monacoTrustRegistered: boolean;    // cuts 8%
+  swissZugHoldingSetup: boolean;     // cuts 4%
+  auditRiskPercent: number;          // 0-100%
+  underAudit: boolean;
+  autoPayTaxes: boolean;
 }
 
 export interface GameState {
@@ -166,19 +204,13 @@ export interface GameState {
   prestigePoints: number;
   month: number;
   year: number;
-  gameSpeed: number; // 0: paused, 1: 1x, 2: 2x, 5: 5x
+  gameSpeed: number;
   soundEnabled: boolean;
   
-  // Dealership
-  dealershipUnlocked: boolean;
-  dealershipLevel: number;
+  // 7 Businesses (including Auto Dealership)
+  businesses: Business[];
   dealershipInventory: DealershipCar[];
   marketCars: DealershipCar[];
-  carsSoldHistoryCount: number;
-  totalDealershipProfit: number;
-
-  // Businesses
-  businesses: Business[];
 
   // Football Club
   footballClub: FootballClub;
@@ -192,11 +224,10 @@ export interface GameState {
   // Luxury
   luxuryItems: LuxuryCollectionItem[];
 
+  // Taxes
+  taxSystem: TaxSystemState;
+
   // Private Club
   privateClubUnlocked: boolean;
   privateClubPerks: PrivateClubPerk[];
-  syndicateDealsUsed: number;
-
-  // History & Notifications
-  notifications: GameEventNotification[];
 }
