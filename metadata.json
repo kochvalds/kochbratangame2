@@ -1,0 +1,6 @@
+{
+  "name": "Looxmaksing Simulator 2",
+  "description": "Элитный симулятор бизнеса, инвестиций, суперкаров, футбольного клуба и предметов роскоши",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
