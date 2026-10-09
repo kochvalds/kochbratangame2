@@ -31,48 +31,45 @@ jobs:
           chmod +x ./gradlew || true
 
       - name: Build APK with Gradle
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
           cd android
           ./gradlew assembleDebug --stacktrace --no-daemon
 
-      - name: Find and Rename APK
+      - name: Prepare Release APK Artifact
         run: |
-          mkdir -p release-apk
-          APK_FILE=$(find android/app/build/outputs/apk/debug/ -name "*.apk" | head -n 1)
-          if [ -f "$APK_FILE" ]; then
-            cp "$APK_FILE" release-apk/LooxmaksingSimulator2.apk
-            echo "Copied $APK_FILE to release-apk/LooxmaksingSimulator2.apk"
+          mkdir -p release-output
+          APK_FOUND=$(find android/app/build/outputs/apk/ -name "*.apk" | head -n 1)
+          if [ -f "$APK_FOUND" ]; then
+            echo "Found genuine built APK at $APK_FOUND"
+            cp "$APK_FOUND" release-output/LooxmaksingSimulator2.apk
+            ls -lh release-output/LooxmaksingSimulator2.apk
           else
-            echo "No APK found, generating fallback artifact package"
-            touch release-apk/LooxmaksingSimulator2.apk
+            echo "ERROR: APK was not produced by Gradle!"
+            exit 1
           fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: LooxmaksingSimulator2-apk
-          path: release-apk/LooxmaksingSimulator2.apk
+          path: release-output/LooxmaksingSimulator2.apk
 
-      - name: Update GitHub Release with APK
+      - name: Publish APK to GitHub Releases
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         with:
-          tag_name: v2.0.0
-          name: "Looxmaksing Simulator 2 - Official Release v2.0.0 (Android APK)"
+          tag_name: v2.2.0
+          name: "Looxmaksing Simulator 2 — Release v2.2.0 (Official Android APK)"
           body: |
-            ## 💎 Looxmaksing Simulator 2 (Android APK) 🏎️🏢📈
+            ## 💎 Looxmaksing Simulator 2 (Android APK Release v2.2.0) 🏎️🏢
 
-            Официальный релиз игры на **Kotlin & Jetpack Compose**!
+            Скомпилированный и подписанный установочный файл Android APK (`LooxmaksingSimulator2.apk`) доступен для скачивания в блоке Assets ниже!
 
-            ### Что нового в этом обновлении:
-            - **Автодилер перенесен в единую систему бизнесов** (стартовая лицензия $40,000)!
-            - **Каждый из 7 бизнесов** теперь имеет собственное интерактивное меню управления и операций!
-            - **Крутая интерактивная диаграмма/график** для акций и криптовалют с таймфреймами, свечами, объемами и торговлей.
-            - **300 единиц элитной недвижимости** по всему миру (Дубай, Нью-Йорк, Монако, Лондон, Токио, Майами, Париж, Лос-Анджелес, Цюрих и др.)!
-            - **50+ реальных суперкаров и гиперкаров** (Porsche, Ferrari, Lamborghini, Bugatti, Koenigsegg, Rolls-Royce, Pagani, Mercedes-AMG, BMW M, Audi RS).
-            - **Налоговая система**: Подоходный и корпоративный налог, налоговые юристы, офшоры в Монако и риск налоговых проверок!
-          files: release-apk/LooxmaksingSimulator2.apk
+            ### Обновления v2.2.0:
+            - **10 Бизнес-Империй**: Автодилер ($40k), Бутики моды, Рестораны Michelin, Приватный банк, Небоскребы, IT-гигант, Космическое агентство, Нефтегазовая корпорация, Медиахолдинг, Биотех-лаборатория.
+            - **Свечные диаграммы акций и криптовалют** с торговым терминалом.
+            - **300 объектов мировой недвижимости** с пассивной арендой.
+            - **50+ реальных суперкаров** (Porsche, Ferrari, Bugatti, Koenigsegg).
+            - **Налоговый кабинет** с оптимизацией и офшорами.
+          files: release-output/LooxmaksingSimulator2.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

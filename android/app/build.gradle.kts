@@ -12,8 +12,8 @@ android {
         applicationId = "com.looxmaksing.simulator"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "2.0.0"
+        versionCode = 2
+        versionName = "2.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -24,10 +24,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        debug {
+            isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
         }
     }
