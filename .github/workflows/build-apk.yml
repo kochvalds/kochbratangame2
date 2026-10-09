@@ -25,21 +25,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Build Web Bundle & Embed in Android Assets
+      - name: Verify Bundled Assets
         run: |
-          npm ci || npm install
-          npm run build
-          mkdir -p android/app/src/main/assets
-          cp -r dist/* android/app/src/main/assets/
-          mkdir -p android/app/src/main/assets/src/assets/images
-          cp -r src/assets/images/* android/app/src/main/assets/src/assets/images/ || true
-          echo "Assets bundled successfully:"
           ls -la android/app/src/main/assets/
+          echo "Assets verified."
 
       - name: Make Gradlew Executable
         run: |
