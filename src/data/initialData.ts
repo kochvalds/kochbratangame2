@@ -208,6 +208,81 @@ export const INITIAL_BUSINESSES: Business[] = [
       { id: 'act_aero_2', title: 'Коммерческий орбитальный отель Aether-1', desc: 'Туристические билеты на 7 дней на орбите по $55M каждый', cost: 12000000, revenueBonus: 2600000, isUnlocked: false, type: 'HOTEL' },
       { id: 'act_aero_3', title: 'Миссия к астероиду Психея 16 (Добыча платины)', desc: 'Дроны для бурения редкоземельных металлов в космосе', cost: 28000000, revenueBonus: 6200000, isUnlocked: false, type: 'MINING' }
     ]
+  },
+  {
+    id: 'biz_energy',
+    name: 'Titan Global Energy & Offshore Oil Megacorp',
+    category: 'ENERGY',
+    categoryName: 'Нефтегазовый холдинг & Зеленая энергия',
+    description: 'Глубоководные буровые платформы в Северном море, СПГ-флот и солнечные мегапарки.',
+    level: 0,
+    unlocked: false,
+    unlockCost: 55000000,
+    valuation: 280000000,
+    monthlyRevenue: 12500000,
+    monthlyExpenses: 4600000,
+    employees: 1450,
+    marketingLevel: 1,
+    techLevel: 1,
+    hrLevel: 1,
+    iconName: 'Flame',
+    specialMetricName: 'Добыча в сутки',
+    specialMetricValue: '450,000 баррелей/день',
+    subActions: [
+      { id: 'act_energy_1', title: 'Шельфовая платформа Titan Deepwater Alpha', desc: 'Автоматизированная добыча нефти на глубине 3,000 метров', cost: 9500000, revenueBonus: 2100000, isUnlocked: false, type: 'DRILLING' },
+      { id: 'act_energy_2', title: 'Флот криогенных СПГ-танкеров Q-Max', desc: 'Поставки сжиженного газа в Азию и Европу по долгосрочным контрактам', cost: 22000000, revenueBonus: 4800000, isUnlocked: false, type: 'LNG' },
+      { id: 'act_energy_3', title: 'Гигаваттный водородный хаб в Дубае', desc: 'Зеленый водород и солнечные фермы мощностью 5 ГВт', cost: 48000000, revenueBonus: 10500000, isUnlocked: false, type: 'HYDROGEN' }
+    ]
+  },
+  {
+    id: 'biz_media',
+    name: 'Paramount Syndicate Media & Cinema Empire',
+    category: 'MEDIA',
+    categoryName: 'Медиахолдинг & Киностудия',
+    description: 'Голливудская киностудия, глобальная сеть IMAX, стриминг Syndicate+ и музыкальные лейблы.',
+    level: 0,
+    unlocked: false,
+    unlockCost: 95000000,
+    valuation: 420000000,
+    monthlyRevenue: 19500000,
+    monthlyExpenses: 7200000,
+    employees: 1800,
+    marketingLevel: 1,
+    techLevel: 1,
+    hrLevel: 1,
+    iconName: 'Film',
+    specialMetricName: 'Подписчиков стриминга',
+    specialMetricValue: '185M активных юзеров',
+    subActions: [
+      { id: 'act_media_1', title: 'Франшиза блокбастера с бюджетом $300M', desc: 'Мировой кинопрокат в 4,500 кинотеатрах с рекордным сбором', cost: 18000000, revenueBonus: 4100000, isUnlocked: false, type: 'CINEMA' },
+      { id: 'act_media_2', title: 'Эксклюзивные права на Лигу Чемпионов и F1', desc: 'Прямые трансляции главных спортивных событий планеты', cost: 38000000, revenueBonus: 8500000, isUnlocked: false, type: 'SPORTS' },
+      { id: 'act_media_3', title: 'Виртуальная метаверс-киностудия HoloCinema', desc: 'Иммерсивные фильмы с ИИ-персонажами в реальном времени', cost: 80000000, revenueBonus: 17500000, isUnlocked: false, type: 'METAVERSE' }
+    ]
+  },
+  {
+    id: 'biz_biotech',
+    name: 'Genomix BioTech & Longevity Therapeutics',
+    category: 'BIOTECH',
+    categoryName: 'Биотех & Продление жизни',
+    description: 'Институт генетической инженерии, омоложение теломер, биочипы и элитные криоцентры в Альпах.',
+    level: 0,
+    unlocked: false,
+    unlockCost: 180000000,
+    valuation: 850000000,
+    monthlyRevenue: 38000000,
+    monthlyExpenses: 13500000,
+    employees: 2200,
+    marketingLevel: 1,
+    techLevel: 1,
+    hrLevel: 1,
+    iconName: 'Dna',
+    specialMetricName: 'Патентов на омоложение',
+    specialMetricValue: '412 глобальных патентов',
+    subActions: [
+      { id: 'act_bio_1', title: 'CRISPR генная терапия регенерации органов', desc: 'Клинические испытания препарата клеточного омоложения', cost: 32000000, revenueBonus: 7200000, isUnlocked: false, type: 'GENE' },
+      { id: 'act_bio_2', title: 'Частный криогенный комплекс в Санкт-Морице', desc: 'Премиальное сохранение биоматериалов для миллиардеров списка Forbes', cost: 65000000, revenueBonus: 14500000, isUnlocked: false, type: 'CRYO' },
+      { id: 'act_bio_3', title: 'Нейроинтерфейс Synapse BioLink', desc: 'Слияние человеческого мозга с квантовым искусственным интеллектом', cost: 140000000, revenueBonus: 32000000, isUnlocked: false, type: 'NEURAL' }
+    ]
   }
 ];
 

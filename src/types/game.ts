@@ -5,7 +5,10 @@ export type BusinessCategory =
   | 'BANKING' 
   | 'CONSTRUCTION' 
   | 'TECH' 
-  | 'AEROSPACE';
+  | 'AEROSPACE'
+  | 'ENERGY'
+  | 'MEDIA'
+  | 'BIOTECH';
 
 export interface BusinessSubAction {
   id: string;

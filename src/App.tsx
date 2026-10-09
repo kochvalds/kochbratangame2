@@ -651,7 +651,7 @@ export default function App() {
           }`}
         >
           <Building2 className="w-3.5 h-3.5" />
-          <span>Бизнес & Автодилер (7 Империй)</span>
+          <span>10 Бизнес-Империй & Автодилер</span>
         </button>
 
         <button

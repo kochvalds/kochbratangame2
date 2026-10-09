@@ -1,7 +1,7 @@
 package com.looxmaksing.simulator.model
 
 enum class BusinessCategory {
-    AUTOMOTIVE, RETAIL, HOSPITALITY, BANKING, CONSTRUCTION, TECH, AEROSPACE
+    AUTOMOTIVE, RETAIL, HOSPITALITY, BANKING, CONSTRUCTION, TECH, AEROSPACE, ENERGY, MEDIA, BIOTECH
 }
 
 data class BusinessSubAction(

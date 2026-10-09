@@ -7,6 +7,9 @@ import {
   Hammer,
   Cpu,
   Rocket,
+  Flame,
+  Film,
+  Dna,
   CheckCircle2,
   Wrench,
   TrendingUp,
@@ -63,6 +66,9 @@ export function UnifiedBusinessView({
       case 'CONSTRUCTION': return <Hammer className="w-4 h-4 text-amber-400" />;
       case 'TECH': return <Cpu className="w-4 h-4 text-amber-400" />;
       case 'AEROSPACE': return <Rocket className="w-4 h-4 text-amber-400" />;
+      case 'ENERGY': return <Flame className="w-4 h-4 text-amber-400" />;
+      case 'MEDIA': return <Film className="w-4 h-4 text-amber-400" />;
+      case 'BIOTECH': return <Dna className="w-4 h-4 text-amber-400" />;
       default: return <Building2 className="w-4 h-4 text-amber-400" />;
     }
   };
