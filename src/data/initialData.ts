@@ -8,7 +8,9 @@ import {
   LuxuryCollectionItem,
   PrivateClubPerk,
   TaxSystemState,
-  CandleDataPoint
+  CandleDataPoint,
+  LooksmaxingState,
+  BanyaState
 } from '../types/game';
 import { EXPANDED_50_CARS } from './expandedCars';
 import { EXPANDED_300_REAL_ESTATE } from './expandedRealEstate';
@@ -387,3 +389,233 @@ export const INITIAL_TAX_SYSTEM: TaxSystemState = {
   underAudit: false,
   autoPayTaxes: false
 };
+
+export const INITIAL_LOOKSMAXING: LooksmaxingState = {
+  overallScore: 24,
+  tier: 'Нормис 🧢',
+  jawline: 25,
+  hunterEyes: 20,
+  skinGlow: 30,
+  physique: 22,
+  hairStyle: 25,
+  mewingStreakDays: 3,
+  isMewingActive: false,
+  banyaVisitsCount: 1,
+  auraPowerBonus: 5,
+  revenueMultiplier: 1.05,
+  upgrades: [
+    // JAWLINE
+    {
+      id: 'lm_jaw_mastic',
+      category: 'JAWLINE',
+      name: 'Mastic Gum Hard (Жевательный тренажер)',
+      description: 'Греческая мастика повышенной жесткости. Прокачивает жевательные мышцы и четкость линии челюсти.',
+      cost: 150,
+      scoreBonus: 6,
+      categoryBoost: '+14 Челюсть',
+      isUnlocked: false,
+      icon: 'Square'
+    },
+    {
+      id: 'lm_jaw_guasha',
+      category: 'JAWLINE',
+      name: 'Скребок Гуаша из нефрита',
+      description: 'Утренний лимфодренажный массаж скул. Убирает отечность лица и подчеркивает угол челюсти.',
+      cost: 450,
+      scoreBonus: 8,
+      categoryBoost: '+16 Челюсть',
+      isUnlocked: false,
+      icon: 'Sparkles'
+    },
+    {
+      id: 'lm_jaw_ortho',
+      category: 'JAWLINE',
+      name: 'Курс Ортотропии & Мьюинг-коучинг',
+      description: 'Профессиональная коррекция осанки языка и положения нижней челюсти. Формирует hollow cheeks.',
+      cost: 2500,
+      scoreBonus: 12,
+      categoryBoost: '+22 Челюсть',
+      isUnlocked: false,
+      icon: 'Shield'
+    },
+    {
+      id: 'lm_jaw_implant',
+      category: 'JAWLINE',
+      name: 'Кастомные титановые импланты углов челюсти',
+      description: 'Хирургическая точность в Швейцарии. Идеальный гониальный угол 110 градусов как у топ-моделей.',
+      cost: 18000,
+      scoreBonus: 20,
+      categoryBoost: '+35 Челюсть',
+      isUnlocked: false,
+      icon: 'Crown'
+    },
+
+    // EYES
+    {
+      id: 'lm_eye_cold',
+      category: 'EYES',
+      name: 'Крио-массаж & Кофеиновые патчи',
+      description: 'Устраняет темные круги под глазами и припухлость после тяжелых бизнес-переговоров.',
+      cost: 220,
+      scoreBonus: 6,
+      categoryBoost: '+12 Взгляд',
+      isUnlocked: false,
+      icon: 'Eye'
+    },
+    {
+      id: 'lm_eye_squinch',
+      category: 'EYES',
+      name: 'Техника Squinching & Тренировки взгляда',
+      description: 'Развитие круговой мышцы глаза. Фирменный пронзительный Hunter Eyes взгляд хищника.',
+      cost: 850,
+      scoreBonus: 10,
+      categoryBoost: '+20 Взгляд',
+      isUnlocked: false,
+      icon: 'Target'
+    },
+    {
+      id: 'lm_eye_cantho',
+      category: 'EYES',
+      name: 'Кантопластика (Положительный Canthal Tilt)',
+      description: 'Подтяжка внешних уголков глаз. Миндалевидная форма глаз топ-моделей и миллиардеров.',
+      cost: 12500,
+      scoreBonus: 18,
+      categoryBoost: '+32 Взгляд',
+      isUnlocked: false,
+      icon: 'Flame'
+    },
+
+    // SKIN
+    {
+      id: 'lm_skin_serum',
+      category: 'SKIN',
+      name: 'Сыворотка с чистым ретинолом & Пептидами',
+      description: 'Золотой стандарт дерматологии. Разглаживает текстуру кожи и придаёт сияние Glass Skin.',
+      cost: 650,
+      scoreBonus: 8,
+      categoryBoost: '+15 Кожа',
+      isUnlocked: false,
+      icon: 'Droplet'
+    },
+    {
+      id: 'lm_skin_laser',
+      category: 'SKIN',
+      name: 'Фракционная лазерная шлифовка Fraxel',
+      description: 'Полное обновление верхнего слоя дермы. Абсолютно чистая, ровная кожа без единого изъяна.',
+      cost: 3800,
+      scoreBonus: 14,
+      categoryBoost: '+26 Кожа',
+      isUnlocked: false,
+      icon: 'Zap'
+    },
+    {
+      id: 'lm_skin_exosomes',
+      category: 'SKIN',
+      name: 'VIP Терапия биоактивными экзосомами',
+      description: 'Передовая биотехнология омоложения клеток. Сияние кожи и тотальная защита от старения.',
+      cost: 8500,
+      scoreBonus: 18,
+      categoryBoost: '+30 Кожа',
+      isUnlocked: false,
+      icon: 'Gem'
+    },
+
+    // PHYSIQUE
+    {
+      id: 'lm_phys_gym',
+      category: 'PHYSIQUE',
+      name: 'Gold Gym Elite + Тренер по V-Taper',
+      description: 'Фокус на среднюю дельту, широчайшие и верх груди. Классический силуэт перевернутого треугольника.',
+      cost: 2400,
+      scoreBonus: 10,
+      categoryBoost: '+18 Торс',
+      isUnlocked: false,
+      icon: 'Activity'
+    },
+    {
+      id: 'lm_phys_cut',
+      category: 'PHYSIQUE',
+      name: 'Спортивная диета и сушка до 9% подкожного жира',
+      description: 'Полосатые дельты, рельефный пресс и венозность предплечий.',
+      cost: 1900,
+      scoreBonus: 12,
+      categoryBoost: '+22 Венозность',
+      isUnlocked: false,
+      icon: 'Flame'
+    },
+    {
+      id: 'lm_phys_anatomy',
+      category: 'PHYSIQUE',
+      name: 'Анатомическая лепка и скульптурирование тела',
+      description: 'Спортивный рельеф греческого бога. Впечатляет партнеров на деловых встречах и закрытых пляжах.',
+      cost: 7200,
+      scoreBonus: 16,
+      categoryBoost: '+32 Телосложение',
+      isUnlocked: false,
+      icon: 'Award'
+    },
+
+    // HAIR
+    {
+      id: 'lm_hair_fade',
+      category: 'HAIR',
+      name: 'Еженедельный Taper Fade в Royal Barbershop',
+      description: 'Дымчатый переход с филигранной четкостью линий висков и бороды.',
+      cost: 350,
+      scoreBonus: 8,
+      categoryBoost: '+16 Прическа',
+      isUnlocked: false,
+      icon: 'Scissors'
+    },
+    {
+      id: 'lm_hair_istanbul',
+      category: 'HAIR',
+      name: 'VIP Пересадка волос Сапфир FUE в Стамбуле',
+      description: '5,000 графтов максимальной плотности. Безупречная линия роста волос до конца жизни.',
+      cost: 11000,
+      scoreBonus: 18,
+      categoryBoost: '+34 Густота волос',
+      isUnlocked: false,
+      icon: 'Crown'
+    },
+
+    // STYLE
+    {
+      id: 'lm_style_scent',
+      category: 'STYLE',
+      name: 'Аромат Creed Aventus 1760 & Tom Ford',
+      description: 'Шлейф натурального ананаса, березы и мускуса. Оставляет неизгладимый след в переговорах.',
+      cost: 850,
+      scoreBonus: 8,
+      categoryBoost: '+16 Аура',
+      isUnlocked: false,
+      icon: 'Wind'
+    },
+    {
+      id: 'lm_style_loropiana',
+      category: 'STYLE',
+      name: 'Индивидуальный пошив Loro Piana & Savile Row',
+      description: 'Кашемир высшей пробы, викунья и шелк. Непревзойденный статус тихой роскоши.',
+      cost: 24000,
+      scoreBonus: 20,
+      categoryBoost: '+38 Престиж',
+      isUnlocked: false,
+      icon: 'Briefcase'
+    }
+  ]
+};
+
+export const INITIAL_BANYA: BanyaState = {
+  temperatureC: 85,
+  steamHumidity: 55,
+  stoneHeat: 90,
+  activeVenik: 'Берёзовый веник',
+  venikCondition: 92,
+  plungePoolTempC: 5,
+  samovarTeaServings: 6,
+  banshikHired: false,
+  steamMasteryLevel: 1,
+  currentRelaxation: 70,
+  buffDurationSeconds: 180
+};
+

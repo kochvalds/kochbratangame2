@@ -186,19 +186,46 @@ export interface PrivateClubPerk {
   multiplier: number;
 }
 
-export interface TaxSystemState {
-  corporateTaxRate: number;     // e.g. 0.20 (20%)
-  wealthTaxRate: number;        // e.g. 0.015 (1.5%)
-  effectiveTaxRate: number;     // calculated after deductions (e.g. 0.04)
-  accumulatedTaxDue: number;    // pending payment this month
-  totalTaxPaid: number;         // lifetime
-  totalTaxSaved: number;        // lifetime
-  offshoreAccountantsHired: boolean; // cuts 6%
-  monacoTrustRegistered: boolean;    // cuts 8%
-  swissZugHoldingSetup: boolean;     // cuts 4%
-  auditRiskPercent: number;          // 0-100%
-  underAudit: boolean;
-  autoPayTaxes: boolean;
+export interface LooksmaxingUpgrade {
+  id: string;
+  category: 'JAWLINE' | 'EYES' | 'SKIN' | 'PHYSIQUE' | 'HAIR' | 'STYLE';
+  name: string;
+  description: string;
+  cost: number;
+  scoreBonus: number;
+  categoryBoost: string;
+  isUnlocked: boolean;
+  icon: string;
+}
+
+export interface LooksmaxingState {
+  overallScore: number;       // 0-100
+  tier: 'Нормис 🧢' | 'Chadlite ⚡' | 'Gigachad 🔱' | 'Apex Mogger 🗿';
+  jawline: number;           // 0-100
+  hunterEyes: number;        // 0-100
+  skinGlow: number;          // 0-100
+  physique: number;          // 0-100
+  hairStyle: number;         // 0-100
+  mewingStreakDays: number;
+  isMewingActive: boolean;
+  banyaVisitsCount: number;
+  auraPowerBonus: number;    // %
+  revenueMultiplier: number; // e.g. 1.25x
+  upgrades: LooksmaxingUpgrade[];
+}
+
+export interface BanyaState {
+  temperatureC: number;       // 60 - 120 °C
+  steamHumidity: number;      // 20 - 95 %
+  stoneHeat: number;          // 0 - 100 %
+  activeVenik: 'Берёзовый веник' | 'Дубовый царский' | 'Эвкалиптовый' | 'Пихтовый';
+  venikCondition: number;     // 0 - 100 %
+  plungePoolTempC: number;    // 3 - 8 °C
+  samovarTeaServings: number;
+  banshikHired: boolean;
+  steamMasteryLevel: number;
+  currentRelaxation: number;  // 0 - 100 %
+  buffDurationSeconds: number;
 }
 
 export interface GameState {
@@ -210,7 +237,7 @@ export interface GameState {
   gameSpeed: number;
   soundEnabled: boolean;
   
-  // 7 Businesses (including Auto Dealership)
+  // 10 Businesses (including Auto Dealership)
   businesses: Business[];
   dealershipInventory: DealershipCar[];
   marketCars: DealershipCar[];
@@ -233,4 +260,9 @@ export interface GameState {
   // Private Club
   privateClubUnlocked: boolean;
   privateClubPerks: PrivateClubPerk[];
+
+  // Looksmaxing & Banya
+  looksmaxing: LooksmaxingState;
+  banya: BanyaState;
 }
+

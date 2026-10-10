@@ -13,7 +13,9 @@ import {
   ExternalLink,
   ShieldCheck,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Gamepad2,
+  Flame
 } from 'lucide-react';
 import {
   INITIAL_BUSINESSES,
@@ -24,7 +26,9 @@ import {
   INITIAL_REAL_ESTATE,
   INITIAL_LUXURY_ITEMS,
   INITIAL_PRIVATE_CLUB_PERKS,
-  INITIAL_TAX_SYSTEM
+  INITIAL_TAX_SYSTEM,
+  INITIAL_LOOKSMAXING,
+  INITIAL_BANYA
 } from './data/initialData';
 import {
   Business,
@@ -37,7 +41,9 @@ import {
   LuxuryCollectionItem,
   PrivateClubPerk,
   TaxSystemState,
-  MatchSimulation
+  MatchSimulation,
+  LooksmaxingState,
+  BanyaState
 } from './types/game';
 import { formatMoney, formatExactMoney, formatPercent, getPrestigeRank, MONTH_NAMES_RU } from './utils/formatters';
 import { sounds } from './utils/audio';
@@ -45,6 +51,9 @@ import { sounds } from './utils/audio';
 import { UnifiedBusinessView } from './components/business/UnifiedBusinessView';
 import { InvestmentsView } from './components/investments/InvestmentsView';
 import { TaxOfficeView } from './components/tax/TaxOfficeView';
+import { GTAWorld3DView } from './components/gta/GTAWorld3DView';
+import { BanyaInteractiveView } from './components/banya/BanyaInteractiveView';
+import { LooksmaxingView } from './components/looksmax/LooksmaxingView';
 
 const HERO_BANNER = '/src/assets/images/loox_hero_luxury_banner_1791553574137.jpg';
 const STADIUM_IMG = '/src/assets/images/football_stadium_arena_1791553596250.jpg';
@@ -59,10 +68,14 @@ export default function App() {
   const [gameSpeed, setGameSpeed] = useState<number>(1); // 0 = pause, 1 = normal, 2 = fast
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
 
-  // Active Navigation Tab (APK HUB REMOVED AS REQUESTED)
-  const [activeTab, setActiveTab] = useState<'business' | 'football' | 'invest' | 'luxury' | 'tax' | 'club'>('business');
+  // Looksmaxing & Banya state
+  const [looksmaxing, setLooksmaxing] = useState<LooksmaxingState>(INITIAL_LOOKSMAXING);
+  const [banya, setBanya] = useState<BanyaState>(INITIAL_BANYA);
 
-  // 7 Businesses (including Auto Dealership)
+  // Active Navigation Tab
+  const [activeTab, setActiveTab] = useState<'gta3d' | 'banya' | 'looksmax' | 'business' | 'football' | 'invest' | 'luxury' | 'tax' | 'club'>('gta3d');
+
+  // 10 Businesses (including Auto Dealership)
   const [businesses, setBusinesses] = useState<Business[]>(INITIAL_BUSINESSES);
   const [dealershipInventory, setDealershipInventory] = useState<DealershipCar[]>([]);
   const [marketCars, setMarketCars] = useState<DealershipCar[]>(INITIAL_DEALERSHIP_CARS);
@@ -112,13 +125,13 @@ export default function App() {
   const monthlyRevenueTotal = React.useMemo(() => {
     let rev = 0;
     businesses.filter(b => b.unlocked).forEach(b => {
-      rev += b.monthlyRevenue;
+      rev += Math.round(b.monthlyRevenue * looksmaxing.revenueMultiplier);
     });
     realEstate.filter(p => p.isOwned).forEach(p => {
       rev += p.monthlyRentalYield;
     });
     return rev;
-  }, [businesses, realEstate]);
+  }, [businesses, realEstate, looksmaxing.revenueMultiplier]);
 
   const monthlyExpensesTotal = React.useMemo(() => {
     let exp = 0;
@@ -642,8 +655,38 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main Tab Navigation (APK HUB TAB REMOVED AS REQUESTED) */}
+      {/* Main Tab Navigation */}
       <nav className="border-b border-neutral-800 bg-neutral-950 px-4 md:px-8 py-2 overflow-x-auto flex items-center gap-2">
+        <button
+          onClick={() => setActiveTab('gta3d')}
+          className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-colors whitespace-nowrap ${
+            activeTab === 'gta3d' ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-neutral-950 shadow-md font-bold' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900 border border-stone-800'
+          }`}
+        >
+          <Gamepad2 className="w-3.5 h-3.5 text-amber-500" />
+          <span>🎮 3D GTA Город</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('banya')}
+          className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-colors whitespace-nowrap ${
+            activeTab === 'banya' ? 'bg-gradient-to-r from-amber-800 to-yellow-900 text-amber-200 shadow-md font-bold border border-amber-600' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'
+          }`}
+        >
+          <Flame className="w-3.5 h-3.5 text-orange-400" />
+          <span>🧖‍♂️ Русская Баня</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('looksmax')}
+          className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-colors whitespace-nowrap ${
+            activeTab === 'looksmax' ? 'bg-gradient-to-r from-rose-900 to-pink-900 text-rose-200 shadow-md font-bold border border-rose-600' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+          <span>🗿 Луксмаксинг</span>
+        </button>
+
         <button
           onClick={() => setActiveTab('business')}
           className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-colors whitespace-nowrap ${
@@ -713,6 +756,48 @@ export default function App() {
 
       {/* Main View Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8">
+
+        {/* TAB 0: 3D GTA OPEN-WORLD CITY */}
+        {activeTab === 'gta3d' && (
+          <GTAWorld3DView
+            onOpenBanya={() => setActiveTab('banya')}
+            onOpenLooksmax={() => setActiveTab('looksmax')}
+            onOpenBusiness={() => setActiveTab('business')}
+            onOpenDealership={() => setActiveTab('business')}
+            onOpenFootball={() => setActiveTab('football')}
+            onOpenInvestments={() => setActiveTab('invest')}
+            onOpenLuxury={() => setActiveTab('luxury')}
+            onOpenClub={() => setActiveTab('club')}
+            onOpenTax={() => setActiveTab('tax')}
+            looksmaxing={looksmaxing}
+            banya={banya}
+            cash={cash}
+          />
+        )}
+
+        {/* TAB: RUSSIAN BANYA */}
+        {activeTab === 'banya' && (
+          <BanyaInteractiveView
+            banya={banya}
+            setBanya={setBanya}
+            looksmaxing={looksmaxing}
+            setLooksmaxing={setLooksmaxing}
+            cash={cash}
+            setCash={setCash}
+            onClose={() => setActiveTab('gta3d')}
+          />
+        )}
+
+        {/* TAB: LOOKSMAXING STUDIO */}
+        {activeTab === 'looksmax' && (
+          <LooksmaxingView
+            looksmaxing={looksmaxing}
+            setLooksmaxing={setLooksmaxing}
+            cash={cash}
+            setCash={setCash}
+            onOpenBanya={() => setActiveTab('banya')}
+          />
+        )}
 
         {/* TAB 1: UNIFIED BUSINESSES (INCLUDES APEX MOTORS AUTO DEALERSHIP + 6 OTHERS) */}
         {activeTab === 'business' && (

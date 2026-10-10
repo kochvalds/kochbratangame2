@@ -72,6 +72,20 @@ class AndroidBridge(private val activity: ComponentActivity) {
             Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
         }
     }
+
+    @JavascriptInterface
+    fun onBanyaSessionComplete(scoreBonus: Int) {
+        activity.runOnUiThread {
+            Toast.makeText(activity, "🧖‍♂️ Русская баня: +$scoreBonus к ауре и здоровью!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @JavascriptInterface
+    fun onLooksmaxTierUp(newTier: String) {
+        activity.runOnUiThread {
+            Toast.makeText(activity, "🗿 Новый Луксмакс-уровень: $newTier!", Toast.LENGTH_LONG).show()
+        }
+    }
 }
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -90,6 +104,7 @@ fun LooxmaksingGameView(
                 )
 
                 setBackgroundColor(0xFF0F0F12.toInt())
+                setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
 
                 settings.apply {
                     javaScriptEnabled = true
@@ -120,3 +135,4 @@ fun LooxmaksingGameView(
         }
     )
 }
+

@@ -161,3 +161,51 @@ data class PrivateClubPerk(
     val isPurchased: Boolean,
     val multiplier: Double
 )
+
+data class LooksmaxingUpgrade(
+    val id: String,
+    val category: String,
+    val name: String,
+    val description: String,
+    val cost: Long,
+    val scoreBonus: Int,
+    val categoryBoost: String,
+    val isUnlocked: Boolean
+)
+
+data class LooksmaxingProfile(
+    val overallScore: Int = 24,
+    val tier: String = "Нормис 🧢",
+    val jawline: Int = 25,
+    val hunterEyes: Int = 20,
+    val skinGlow: Int = 30,
+    val physique: Int = 22,
+    val hairStyle: Int = 25,
+    val mewingStreakDays: Int = 3,
+    val banyaVisitsCount: Int = 1,
+    val auraPowerBonus: Int = 5,
+    val revenueMultiplier: Double = 1.05,
+    val upgrades: List<LooksmaxingUpgrade> = emptyList()
+)
+
+data class BanyaFacility(
+    val temperatureC: Int = 85,
+    val steamHumidity: Int = 55,
+    val stoneHeat: Int = 90,
+    val activeVenik: String = "Берёзовый веник",
+    val venikCondition: Int = 92,
+    val plungePoolTempC: Int = 4,
+    val samovarTeaServings: Int = 6,
+    val banshikHired: Boolean = false,
+    val currentRelaxation: Int = 70
+)
+
+data class GTA3DWorldState(
+    val inVehicle: Boolean = false,
+    val currentVehicleName: String = "",
+    val speedKmh: Int = 0,
+    val radioStation: String = "Luxury Phonk FM",
+    val playerPosX: Float = 0f,
+    val playerPosZ: Float = 15f
+)
+
