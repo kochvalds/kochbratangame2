@@ -24,6 +24,7 @@ interface BanyaInteractiveViewProps {
   cash: number;
   setCash: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
+  onOpenKochBratan?: () => void;
 }
 
 export function BanyaInteractiveView({
@@ -33,7 +34,8 @@ export function BanyaInteractiveView({
   setLooksmaxing,
   cash,
   setCash,
-  onClose
+  onClose,
+  onOpenKochBratan
 }: BanyaInteractiveViewProps) {
   const [steamParticlesActive, setSteamParticlesActive] = useState<boolean>(false);
   const [broomSlapping, setBroomSlapping] = useState<boolean>(false);
@@ -190,19 +192,30 @@ export function BanyaInteractiveView({
           </div>
         </div>
 
-        {/* Live Gauges */}
-        <div className="flex items-center gap-2 md:gap-4 bg-black/40 border border-amber-700/30 px-3 py-1.5 rounded-xl text-xs">
-          <div className="flex items-center gap-1 text-amber-400">
-            <Thermometer className="w-4 h-4 text-red-400" />
-            <span className="font-bold text-sm">{banya.temperatureC}°C</span>
-          </div>
-          <div className="flex items-center gap-1 text-sky-300">
-            <Droplets className="w-4 h-4 text-sky-400" />
-            <span>{banya.steamHumidity}% влажн.</span>
-          </div>
-          <div className="flex items-center gap-1 text-emerald-400">
-            <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span>{banya.currentRelaxation}% релакс</span>
+        {/* Live Gauges & Koch Bratan */}
+        <div className="flex items-center gap-3">
+          {onOpenKochBratan && (
+            <button
+              onClick={onOpenKochBratan}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs shadow-md shadow-amber-500/20 transition-all"
+            >
+              <span>🗿</span>
+              <span>Коч Братан рядом</span>
+            </button>
+          )}
+          <div className="flex items-center gap-2 md:gap-4 bg-black/40 border border-amber-700/30 px-3 py-1.5 rounded-xl text-xs">
+            <div className="flex items-center gap-1 text-amber-400">
+              <Thermometer className="w-4 h-4 text-red-400" />
+              <span className="font-bold text-sm">{banya.temperatureC}°C</span>
+            </div>
+            <div className="flex items-center gap-1 text-sky-300">
+              <Droplets className="w-4 h-4 text-sky-400" />
+              <span>{banya.steamHumidity}% влажн.</span>
+            </div>
+            <div className="flex items-center gap-1 text-emerald-400">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>{banya.currentRelaxation}% релакс</span>
+            </div>
           </div>
         </div>
       </div>

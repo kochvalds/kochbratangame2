@@ -28,7 +28,11 @@ import {
   INITIAL_PRIVATE_CLUB_PERKS,
   INITIAL_TAX_SYSTEM,
   INITIAL_LOOKSMAXING,
-  INITIAL_BANYA
+  INITIAL_BANYA,
+  INITIAL_GYM,
+  INITIAL_CUSTOMIZATION,
+  INITIAL_WEAPONS,
+  INITIAL_ACHIEVEMENTS
 } from './data/initialData';
 import {
   Business,
@@ -43,7 +47,11 @@ import {
   TaxSystemState,
   MatchSimulation,
   LooksmaxingState,
-  BanyaState
+  BanyaState,
+  GymState,
+  CustomizationState,
+  WeaponItem,
+  AchievementItem
 } from './types/game';
 import { formatMoney, formatExactMoney, formatPercent, getPrestigeRank, MONTH_NAMES_RU } from './utils/formatters';
 import { sounds } from './utils/audio';
@@ -54,6 +62,11 @@ import { TaxOfficeView } from './components/tax/TaxOfficeView';
 import { GTAWorld3DView } from './components/gta/GTAWorld3DView';
 import { BanyaInteractiveView } from './components/banya/BanyaInteractiveView';
 import { LooksmaxingView } from './components/looksmax/LooksmaxingView';
+import { KochBratanDialogModal } from './components/bratan/KochBratanDialogModal';
+import { GymWorkoutView } from './components/gym/GymWorkoutView';
+import { CustomizationBoutiqueView } from './components/customization/CustomizationBoutiqueView';
+import { GunShopModal } from './components/armory/GunShopModal';
+import { AchievementsModal } from './components/achievements/AchievementsModal';
 
 const HERO_BANNER = '/src/assets/images/loox_hero_luxury_banner_1791553574137.jpg';
 const STADIUM_IMG = '/src/assets/images/football_stadium_arena_1791553596250.jpg';
@@ -73,7 +86,19 @@ export default function App() {
   const [banya, setBanya] = useState<BanyaState>(INITIAL_BANYA);
 
   // Active Navigation Tab
-  const [activeTab, setActiveTab] = useState<'gta3d' | 'banya' | 'looksmax' | 'business' | 'football' | 'invest' | 'luxury' | 'tax' | 'club'>('gta3d');
+  const [activeTab, setActiveTab] = useState<'gta3d' | 'banya' | 'gym' | 'looksmax' | 'customization' | 'business' | 'football' | 'invest' | 'luxury' | 'tax' | 'club'>('gta3d');
+
+  // Gym, Customization, Weapons, Achievements & Koch Bratan States
+  const [gym, setGym] = useState<GymState>(INITIAL_GYM);
+  const [customization, setCustomization] = useState<CustomizationState>(INITIAL_CUSTOMIZATION);
+  const [weapons, setWeapons] = useState<WeaponItem[]>(INITIAL_WEAPONS);
+  const [achievements, setAchievements] = useState<AchievementItem[]>(INITIAL_ACHIEVEMENTS);
+
+  // Modals state
+  const [isBratanModalOpen, setIsBratanModalOpen] = useState<boolean>(false);
+  const [isArmoryModalOpen, setIsArmoryModalOpen] = useState<boolean>(false);
+  const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState<boolean>(false);
+  const [saveToast, setSaveToast] = useState<string | null>(null);
 
   // 10 Businesses (including Auto Dealership)
   const [businesses, setBusinesses] = useState<Business[]>(INITIAL_BUSINESSES);
@@ -108,6 +133,107 @@ export default function App() {
   useEffect(() => {
     sounds.enabled = soundEnabled;
   }, [soundEnabled]);
+
+  // Load saved state on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('looxmaksing_save_v2');
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.cash !== undefined) setCash(data.cash);
+        if (data.prestigePoints !== undefined) setPrestigePoints(data.prestigePoints);
+        if (data.month !== undefined) setMonth(data.month);
+        if (data.year !== undefined) setYear(data.year);
+        if (data.looksmaxing) setLooksmaxing(data.looksmaxing);
+        if (data.banya) setBanya(data.banya);
+        if (data.gym) setGym(data.gym);
+        if (data.customization) setCustomization(data.customization);
+        if (data.weapons) setWeapons(data.weapons);
+        if (data.achievements) setAchievements(data.achievements);
+        if (data.businesses) setBusinesses(data.businesses);
+        if (data.dealershipInventory) setDealershipInventory(data.dealershipInventory);
+        if (data.stocks) setStocks(data.stocks);
+        if (data.cryptos) setCryptos(data.cryptos);
+        if (data.realEstate) setRealEstate(data.realEstate);
+        if (data.luxuryItems) setLuxuryItems(data.luxuryItems);
+        if (data.taxSystem) setTaxSystem(data.taxSystem);
+      }
+    } catch {
+      // Ignored
+    }
+  }, []);
+
+  // Save game helper
+  const handleSaveGame = (isManual = true) => {
+    try {
+      const saveData = {
+        cash,
+        prestigePoints,
+        month,
+        year,
+        looksmaxing,
+        banya,
+        gym,
+        customization,
+        weapons,
+        achievements,
+        businesses,
+        dealershipInventory,
+        stocks,
+        cryptos,
+        realEstate,
+        luxuryItems,
+        taxSystem
+      };
+      localStorage.setItem('looxmaksing_save_v2', JSON.stringify(saveData));
+      if (isManual) {
+        sounds.playClick();
+        setSaveToast('💾 Прогресс игры успешно сохранён!');
+        setTimeout(() => setSaveToast(null), 3000);
+      }
+    } catch {
+      // Storage full
+    }
+  };
+
+  // Auto-save every 20 seconds
+  useEffect(() => {
+    const autoSaveTimer = setInterval(() => {
+      handleSaveGame(false);
+    }, 20000);
+    return () => clearInterval(autoSaveTimer);
+  }, [cash, prestigePoints, month, year, looksmaxing, banya, gym, customization, weapons, achievements, businesses, dealershipInventory, stocks, cryptos, realEstate, luxuryItems, taxSystem]);
+
+  // Export Save to file
+  const handleExportSave = () => {
+    const saveData = {
+      cash,
+      prestigePoints,
+      month,
+      year,
+      looksmaxing,
+      banya,
+      gym,
+      customization,
+      weapons,
+      achievements,
+      businesses,
+      dealershipInventory,
+      stocks,
+      cryptos,
+      realEstate,
+      luxuryItems,
+      taxSystem
+    };
+    const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Looxmaksing_Save_${year}_${month}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    sounds.playCash();
+  };
 
   // Net worth calculation
   const netWorth = React.useMemo(() => {
@@ -163,16 +289,16 @@ export default function App() {
     let monthTaxPaid = 0;
     if (taxSystem.autoPayTaxes) {
       monthTaxPaid = monthlyTaxDue;
-      setCash(c => Math.max(0, c + netMonthlyProfit - monthlyTaxDue));
-      setTaxSystem(t => ({
+      setCash((c: number) => Math.max(0, c + netMonthlyProfit - monthlyTaxDue));
+      setTaxSystem((t: TaxSystemState) => ({
         ...t,
         accumulatedTaxDue: 0,
         totalTaxPaid: t.totalTaxPaid + monthlyTaxDue,
         totalTaxSaved: t.totalTaxSaved + Math.max(0, Math.round(netMonthlyProfit * (0.215 - t.effectiveTaxRate)))
       }));
     } else {
-      setCash(c => Math.max(0, c + netMonthlyProfit));
-      setTaxSystem(t => ({
+      setCash((c: number) => Math.max(0, c + netMonthlyProfit));
+      setTaxSystem((t: TaxSystemState) => ({
         ...t,
         accumulatedTaxDue: t.accumulatedTaxDue + monthlyTaxDue,
         totalTaxSaved: t.totalTaxSaved + Math.max(0, Math.round(netMonthlyProfit * (0.215 - t.effectiveTaxRate)))
@@ -507,8 +633,8 @@ export default function App() {
   const handlePayTaxes = () => {
     const due = taxSystem.accumulatedTaxDue || monthlyTaxDue;
     if (cash >= due) {
-      setCash(c => c - due);
-      setTaxSystem(t => ({
+      setCash((c: number) => c - due);
+      setTaxSystem((t: TaxSystemState) => ({
         ...t,
         accumulatedTaxDue: 0,
         totalTaxPaid: t.totalTaxPaid + due
@@ -517,13 +643,13 @@ export default function App() {
   };
 
   const handleToggleAutoPay = () => {
-    setTaxSystem(t => ({ ...t, autoPayTaxes: !t.autoPayTaxes }));
+    setTaxSystem((t: TaxSystemState) => ({ ...t, autoPayTaxes: !t.autoPayTaxes }));
   };
 
   const handleUnlockOptimization = (type: 'lawyers' | 'monaco' | 'swiss') => {
     if (type === 'lawyers' && cash >= 35000 && !taxSystem.offshoreAccountantsHired) {
-      setCash(c => c - 35000);
-      setTaxSystem(t => ({
+      setCash((c: number) => c - 35000);
+      setTaxSystem((t: TaxSystemState) => ({
         ...t,
         offshoreAccountantsHired: true,
         effectiveTaxRate: Math.max(0.02, t.effectiveTaxRate - 0.06),
@@ -531,8 +657,8 @@ export default function App() {
       }));
       sounds.playCash();
     } else if (type === 'monaco' && cash >= 120000 && !taxSystem.monacoTrustRegistered) {
-      setCash(c => c - 120000);
-      setTaxSystem(t => ({
+      setCash((c: number) => c - 120000);
+      setTaxSystem((t: TaxSystemState) => ({
         ...t,
         monacoTrustRegistered: true,
         effectiveTaxRate: Math.max(0.02, t.effectiveTaxRate - 0.08),
@@ -540,8 +666,8 @@ export default function App() {
       }));
       sounds.playCash();
     } else if (type === 'swiss' && cash >= 350000 && !taxSystem.swissZugHoldingSetup) {
-      setCash(c => c - 350000);
-      setTaxSystem(t => ({
+      setCash((c: number) => c - 350000);
+      setTaxSystem((t: TaxSystemState) => ({
         ...t,
         swissZugHoldingSetup: true,
         effectiveTaxRate: Math.max(0.02, t.effectiveTaxRate - 0.05),
@@ -678,6 +804,16 @@ export default function App() {
         </button>
 
         <button
+          onClick={() => setActiveTab('gym')}
+          className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-colors whitespace-nowrap ${
+            activeTab === 'gym' ? 'bg-gradient-to-r from-blue-700 to-indigo-800 text-blue-200 shadow-md font-bold border border-blue-500' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'
+          }`}
+        >
+          <span>🏋️</span>
+          <span>Gold’s Gym & Коч Зал</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('looksmax')}
           className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-colors whitespace-nowrap ${
             activeTab === 'looksmax' ? 'bg-gradient-to-r from-rose-900 to-pink-900 text-rose-200 shadow-md font-bold border border-rose-600' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'
@@ -685,6 +821,16 @@ export default function App() {
         >
           <Sparkles className="w-3.5 h-3.5 text-pink-400" />
           <span>🗿 Луксмаксинг</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('customization')}
+          className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-colors whitespace-nowrap ${
+            activeTab === 'customization' ? 'bg-gradient-to-r from-purple-800 to-fuchsia-900 text-purple-200 shadow-md font-bold border border-purple-500' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'
+          }`}
+        >
+          <span>🛍️</span>
+          <span>Бутик Одежды & Стиль</span>
         </button>
 
         <button
@@ -752,6 +898,50 @@ export default function App() {
             <span className="text-[10px] text-neutral-500 ml-1">Lvl 4</span>
           )}
         </button>
+
+        {/* Action shortcut buttons */}
+        <div className="flex items-center gap-1.5 pl-3 border-l border-neutral-800 shrink-0">
+          <button
+            onClick={() => setIsBratanModalOpen(true)}
+            className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-xs font-black rounded-xl shadow-md transition-all whitespace-nowrap"
+          >
+            <span>🗿</span>
+            <span>Коч Братан</span>
+          </button>
+
+          <button
+            onClick={() => setIsArmoryModalOpen(true)}
+            className="flex items-center gap-1 px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-red-400 text-xs font-bold rounded-xl border border-neutral-700 transition-all whitespace-nowrap"
+          >
+            <span>🔫</span>
+            <span>Оружейная</span>
+          </button>
+
+          <button
+            onClick={() => setIsAchievementsModalOpen(true)}
+            className="flex items-center gap-1 px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-amber-400 text-xs font-bold rounded-xl border border-neutral-700 transition-all whitespace-nowrap"
+          >
+            <span>🏆</span>
+            <span>Трофеи</span>
+          </button>
+
+          <button
+            onClick={() => handleSaveGame(true)}
+            className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition-all whitespace-nowrap"
+          >
+            <span>💾</span>
+            <span>Сохранить</span>
+          </button>
+
+          <button
+            onClick={handleExportSave}
+            className="flex items-center gap-1 px-2.5 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-medium rounded-xl border border-neutral-700 transition-all whitespace-nowrap"
+            title="Экспорт файла сохранения JSON"
+          >
+            <span>📥</span>
+            <span>Экспорт</span>
+          </button>
+        </div>
       </nav>
 
       {/* Main View Container */}
@@ -769,6 +959,10 @@ export default function App() {
             onOpenLuxury={() => setActiveTab('luxury')}
             onOpenClub={() => setActiveTab('club')}
             onOpenTax={() => setActiveTab('tax')}
+            onOpenGym={() => setActiveTab('gym')}
+            onOpenArmory={() => setIsArmoryModalOpen(true)}
+            onOpenCustomization={() => setActiveTab('customization')}
+            onOpenKochBratan={() => setIsBratanModalOpen(true)}
             looksmaxing={looksmaxing}
             banya={banya}
             cash={cash}
@@ -784,6 +978,34 @@ export default function App() {
             setLooksmaxing={setLooksmaxing}
             cash={cash}
             setCash={setCash}
+            onClose={() => setActiveTab('gta3d')}
+            onOpenKochBratan={() => setIsBratanModalOpen(true)}
+          />
+        )}
+
+        {/* TAB: GOLD'S GYM / КОЧ ЗАЛ */}
+        {activeTab === 'gym' && (
+          <GymWorkoutView
+            gym={gym}
+            setGym={setGym}
+            looksmaxing={looksmaxing}
+            setLooksmaxing={setLooksmaxing}
+            onClose={() => setActiveTab('gta3d')}
+            onOpenKochBratan={() => setIsBratanModalOpen(true)}
+          />
+        )}
+
+        {/* TAB: CUSTOMIZATION BOUTIQUE */}
+        {activeTab === 'customization' && (
+          <CustomizationBoutiqueView
+            customization={customization}
+            setCustomization={setCustomization}
+            looksmaxing={looksmaxing}
+            setLooksmaxing={setLooksmaxing}
+            cash={cash}
+            setCash={setCash}
+            prestigePoints={prestigePoints}
+            setPrestigePoints={setPrestigePoints}
             onClose={() => setActiveTab('gta3d')}
           />
         )}
@@ -1160,6 +1382,69 @@ export default function App() {
           </a>
         </div>
       </footer>
+
+      {/* MODAL 1: KOCH BRATAN DIALOGUE */}
+      {isBratanModalOpen && (
+        <KochBratanDialogModal
+          onClose={() => setIsBratanModalOpen(false)}
+          onOpenBanya={() => {
+            setIsBratanModalOpen(false);
+            setActiveTab('banya');
+          }}
+          onOpenGym={() => {
+            setIsBratanModalOpen(false);
+            setActiveTab('gym');
+          }}
+          onOpenGTA={() => {
+            setIsBratanModalOpen(false);
+            setActiveTab('gta3d');
+          }}
+          looksmaxingScore={looksmaxing.overallScore}
+          cash={cash}
+          onClaimReward={(rCash, rPres, msg) => {
+            setCash((c: number) => c + rCash);
+            setPrestigePoints((p: number) => p + rPres);
+            setSaveToast(msg);
+            setTimeout(() => setSaveToast(null), 3500);
+          }}
+        />
+      )}
+
+      {/* MODAL 2: AMMU-NATION GUN SHOP */}
+      {isArmoryModalOpen && (
+        <GunShopModal
+          weapons={weapons}
+          setWeapons={setWeapons}
+          cash={cash}
+          setCash={setCash}
+          onClose={() => setIsArmoryModalOpen(false)}
+          onOpenGTA={() => {
+            setIsArmoryModalOpen(false);
+            setActiveTab('gta3d');
+          }}
+        />
+      )}
+
+      {/* MODAL 3: ACHIEVEMENTS & TROPHIES */}
+      {isAchievementsModalOpen && (
+        <AchievementsModal
+          achievements={achievements}
+          setAchievements={setAchievements}
+          cash={cash}
+          setCash={setCash}
+          prestigePoints={prestigePoints}
+          setPrestigePoints={setPrestigePoints}
+          onClose={() => setIsAchievementsModalOpen(false)}
+        />
+      )}
+
+      {/* SAVE TOAST POPUP */}
+      {saveToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-neutral-900 border border-emerald-500/50 text-emerald-300 py-3 px-5 rounded-2xl shadow-2xl text-xs font-black flex items-center gap-2.5 animate-bounce">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+          <span>{saveToast}</span>
+        </div>
+      )}
     </div>
   );
 }

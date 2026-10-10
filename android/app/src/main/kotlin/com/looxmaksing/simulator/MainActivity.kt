@@ -86,6 +86,32 @@ class AndroidBridge(private val activity: ComponentActivity) {
             Toast.makeText(activity, "🗿 Новый Луксмакс-уровень: $newTier!", Toast.LENGTH_LONG).show()
         }
     }
+
+    @JavascriptInterface
+    fun onGymWorkoutComplete(exerciseName: String, weightKg: Int) {
+        activity.runOnUiThread {
+            Toast.makeText(activity, "🏋️ $exerciseName ($weightKg кг) успешно выполнен! V-Taper растет!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @JavascriptInterface
+    fun onAchievementUnlocked(title: String) {
+        activity.runOnUiThread {
+            Toast.makeText(activity, "🏆 Достижение разблокировано: $title!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    @JavascriptInterface
+    fun onKochBratanDialog(topic: String) {
+        activity.runOnUiThread {
+            Toast.makeText(activity, "🤝 Коч Братан: $topic", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @JavascriptInterface
+    fun onWeaponFired(weaponName: String) {
+        // Native vibration/haptic feedback trigger on real Android hardware
+    }
 }
 
 @SuppressLint("SetJavaScriptEnabled")

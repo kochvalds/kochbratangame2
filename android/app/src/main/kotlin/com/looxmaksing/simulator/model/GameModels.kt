@@ -209,3 +209,86 @@ data class GTA3DWorldState(
     val playerPosZ: Float = 15f
 )
 
+data class GymExercise(
+    val id: String,
+    val name: String,
+    val targetMuscle: String,
+    val currentWeightKg: Int,
+    val maxWeightKg: Int,
+    val repsCompleted: Int,
+    val energyCost: Int,
+    val physiqueGain: Int,
+    val strengthGain: Int
+)
+
+data class GymState(
+    val benchPressWeightKg: Int = 80,
+    val deadliftWeightKg: Int = 120,
+    val squatsWeightKg: Int = 100,
+    val bicepWeightKg: Int = 18,
+    val stamina: Int = 85,
+    val totalWorkoutsCount: Int = 4,
+    val currentStreakDays: Int = 3,
+    val membershipType: String = "GOLDS_VIP",
+    val personalTrainerHired: Boolean = true,
+    val exercises: List<GymExercise> = emptyList()
+)
+
+data class CustomizationItem(
+    val id: String,
+    val category: String, // HAIRCUT, OUTFIT, ACCESSORY, BEARD
+    val name: String,
+    val brand: String,
+    val price: Long,
+    val prestigeBonus: Long,
+    val looksBonus: Int,
+    val isOwned: Boolean,
+    val isEquipped: Boolean,
+    val description: String
+)
+
+data class CustomizationState(
+    val equippedHaircut: String = "taper_fade",
+    val equippedOutfit: String = "loro_piana_knit",
+    val equippedAccessory: String = "gold_cuban_chain",
+    val equippedBeard: String = "chad_stubble",
+    val muscleMassIndex: Int = 78,
+    val bodyFatPercent: Int = 11,
+    val items: List<CustomizationItem> = emptyList()
+)
+
+data class WeaponItem(
+    val id: String,
+    val name: String,
+    val category: String,
+    val price: Long,
+    val damage: Int,
+    val fireRate: Double,
+    val ammo: Int,
+    val maxAmmo: Int,
+    val isOwned: Boolean,
+    val isEquipped: Boolean,
+    val tagline: String
+)
+
+data class AchievementItem(
+    val id: String,
+    val title: String,
+    val description: String,
+    val category: String,
+    val tier: String,
+    val rewardCash: Long,
+    val rewardPrestige: Long,
+    val isUnlocked: Boolean,
+    val progress: Long,
+    val maxProgress: Long
+)
+
+data class KochBratanDialog(
+    val id: String,
+    val speaker: String,
+    val text: String,
+    val audioTone: String = "hype"
+)
+
+

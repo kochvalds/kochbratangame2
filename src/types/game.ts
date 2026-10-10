@@ -228,6 +228,105 @@ export interface BanyaState {
   buffDurationSeconds: number;
 }
 
+export interface TaxSystemState {
+  corporateTaxRate: number;
+  wealthTaxRate: number;
+  effectiveTaxRate: number;
+  accumulatedTaxDue: number;
+  totalTaxPaid: number;
+  totalTaxSaved: number;
+  offshoreAccountantsHired: boolean;
+  monacoTrustRegistered: boolean;
+  swissZugHoldingSetup: boolean;
+  auditRiskPercent: number;
+  underAudit: boolean;
+  autoPayTaxes: boolean;
+}
+
+export interface GymExercise {
+  id: string;
+  name: string;
+  targetMuscle: string;
+  currentWeightKg: number;
+  maxWeightKg: number;
+  repsCompleted: number;
+  energyCost: number;
+  physiqueGain: number;
+  strengthGain: number;
+}
+
+export interface GymState {
+  benchPressWeightKg: number;
+  deadliftWeightKg: number;
+  squatsWeightKg: number;
+  bicepWeightKg: number;
+  stamina: number; // 0-100
+  totalWorkoutsCount: number;
+  currentStreakDays: number;
+  membershipType: 'STANDART' | 'GOLDS_VIP' | 'OLYMPUS_ELITE';
+  personalTrainerHired: boolean;
+  exercises: GymExercise[];
+}
+
+export interface CustomizationItem {
+  id: string;
+  category: 'HAIRCUT' | 'OUTFIT' | 'ACCESSORY' | 'BEARD';
+  name: string;
+  brand: string;
+  price: number;
+  prestigeBonus: number;
+  looksBonus: number;
+  isOwned: boolean;
+  isEquipped: boolean;
+  description: string;
+  colorHex?: string;
+}
+
+export interface CustomizationState {
+  equippedHaircut: string;
+  equippedOutfit: string;
+  equippedAccessory: string;
+  equippedBeard: string;
+  muscleMassIndex: number; // 0-100
+  bodyFatPercent: number;   // 8-25%
+  items: CustomizationItem[];
+}
+
+export interface WeaponItem {
+  id: string;
+  name: string;
+  category: 'PISTOL' | 'RIFLE' | 'SHOTGUN' | 'SNIPER' | 'HEAVY';
+  price: number;
+  damage: number;
+  fireRate: number;
+  ammo: number;
+  maxAmmo: number;
+  isOwned: boolean;
+  isEquipped: boolean;
+  tagline: string;
+}
+
+export interface AchievementItem {
+  id: string;
+  title: string;
+  description: string;
+  category: 'LIFESTYLE' | 'BANYA' | 'GYM' | 'WEALTH' | 'CARS' | 'GTA';
+  tier: 'BRONZE' | 'SILVER' | 'GOLD' | 'DIAMOND';
+  rewardCash: number;
+  rewardPrestige: number;
+  isUnlocked: boolean;
+  unlockedAt?: string;
+  progress: number;
+  maxProgress: number;
+}
+
+export interface KochBratanDialog {
+  id: string;
+  speaker: 'Коч Братан' | 'Игрок';
+  text: string;
+  audioTone?: 'hype' | 'wisdom' | 'calm' | 'pump';
+}
+
 export interface GameState {
   cash: number;
   bankSavings: number;
@@ -264,5 +363,11 @@ export interface GameState {
   // Looksmaxing & Banya
   looksmaxing: LooksmaxingState;
   banya: BanyaState;
+
+  // New modules: Gym, Customization, Weapons, Achievements
+  gym: GymState;
+  customization: CustomizationState;
+  weapons: WeaponItem[];
+  achievements: AchievementItem[];
 }
 

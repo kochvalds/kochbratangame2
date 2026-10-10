@@ -10,7 +10,12 @@ import {
   TaxSystemState,
   CandleDataPoint,
   LooksmaxingState,
-  BanyaState
+  BanyaState,
+  GymState,
+  CustomizationState,
+  WeaponItem,
+  AchievementItem,
+  KochBratanDialog
 } from '../types/game';
 import { EXPANDED_50_CARS } from './expandedCars';
 import { EXPANDED_300_REAL_ESTATE } from './expandedRealEstate';
@@ -618,4 +623,446 @@ export const INITIAL_BANYA: BanyaState = {
   currentRelaxation: 70,
   buffDurationSeconds: 180
 };
+
+export const INITIAL_GYM: GymState = {
+  benchPressWeightKg: 80,
+  deadliftWeightKg: 120,
+  squatsWeightKg: 100,
+  bicepWeightKg: 18,
+  stamina: 85,
+  totalWorkoutsCount: 4,
+  currentStreakDays: 3,
+  membershipType: 'GOLDS_VIP',
+  personalTrainerHired: true,
+  exercises: [
+    {
+      id: 'bench_press',
+      name: 'Классический жим штанги лёжа',
+      targetMuscle: 'Грудные & Трицепс (V-Taper)',
+      currentWeightKg: 80,
+      maxWeightKg: 200,
+      repsCompleted: 12,
+      energyCost: 15,
+      physiqueGain: 3,
+      strengthGain: 5
+    },
+    {
+      id: 'deadlift',
+      name: 'Становая тяга сумо',
+      targetMuscle: 'Спина, трапеции & Кор',
+      currentWeightKg: 120,
+      maxWeightKg: 300,
+      repsCompleted: 8,
+      energyCost: 20,
+      physiqueGain: 4,
+      strengthGain: 7
+    },
+    {
+      id: 'squats',
+      name: 'Приседания со штангой на плечах',
+      targetMuscle: 'Квадрицепсы & Ягодичные',
+      currentWeightKg: 100,
+      maxWeightKg: 250,
+      repsCompleted: 10,
+      energyCost: 18,
+      physiqueGain: 4,
+      strengthGain: 6
+    },
+    {
+      id: 'bicep_curl',
+      name: 'Подъем гантелей на бицепс стоя',
+      targetMuscle: 'Бицепс & Предплечья',
+      currentWeightKg: 18,
+      maxWeightKg: 45,
+      repsCompleted: 15,
+      energyCost: 10,
+      physiqueGain: 2,
+      strengthGain: 3
+    },
+    {
+      id: 'lat_pulldown',
+      name: 'Тяга верхнего блока к груди',
+      targetMuscle: 'Широчайшие (Крылья Chada)',
+      currentWeightKg: 70,
+      maxWeightKg: 150,
+      repsCompleted: 12,
+      energyCost: 12,
+      physiqueGain: 3,
+      strengthGain: 4
+    }
+  ]
+};
+
+export const INITIAL_CUSTOMIZATION: CustomizationState = {
+  equippedHaircut: 'taper_fade',
+  equippedOutfit: 'loro_piana_knit',
+  equippedAccessory: 'gold_cuban_chain',
+  equippedBeard: 'chad_stubble',
+  muscleMassIndex: 78,
+  bodyFatPercent: 11,
+  items: [
+    // Haircuts
+    {
+      id: 'buzzcut_chad',
+      category: 'HAIRCUT',
+      name: 'Милитари Buzzcut Chad',
+      brand: 'Royal Barber Club',
+      price: 150,
+      prestigeBonus: 5,
+      looksBonus: 8,
+      isOwned: true,
+      isEquipped: false,
+      description: 'Ультракороткая стрижка, максимально подчеркивающая челюсть и костную структуру черепа.'
+    },
+    {
+      id: 'taper_fade',
+      category: 'HAIRCUT',
+      name: 'Дымчатый Low Taper Fade',
+      brand: 'Royal Barber Club',
+      price: 350,
+      prestigeBonus: 10,
+      looksBonus: 14,
+      isOwned: true,
+      isEquipped: true,
+      description: 'Филигранный переход по бокам и текстурный верх. Любимая прическа топ-моделей.'
+    },
+    {
+      id: 'slick_back_wallst',
+      category: 'HAIRCUT',
+      name: 'Wall Street Slick Back',
+      brand: 'Savile Row Atelier',
+      price: 800,
+      prestigeBonus: 20,
+      looksBonus: 16,
+      isOwned: false,
+      isEquipped: false,
+      description: 'Гладкая укладка назад на матовой помаде. Образ миллиардера из Монако.'
+    },
+    // Outfits
+    {
+      id: 'gym_stringer',
+      category: 'OUTFIT',
+      name: 'Oversized Gold’s Gym Stringer',
+      brand: 'Iron Mecca',
+      price: 120,
+      prestigeBonus: 4,
+      looksBonus: 10,
+      isOwned: true,
+      isEquipped: false,
+      description: 'Открытая майка для тренировок, подчеркивающая прорисовку дельт и широчайших мышц.'
+    },
+    {
+      id: 'loro_piana_knit',
+      category: 'OUTFIT',
+      name: 'Loro Piana Cashmere Hoodie & Trousers',
+      brand: 'Loro Piana Milan',
+      price: 6500,
+      prestigeBonus: 35,
+      looksBonus: 25,
+      isOwned: true,
+      isEquipped: true,
+      description: 'Безупречный кашемир викуньи молочного оттенка. Тихая роскошь высшего эшелона.'
+    },
+    {
+      id: 'chrome_hearts_leather',
+      category: 'OUTFIT',
+      name: 'Chrome Hearts Custom Biker Jacket',
+      brand: 'Chrome Hearts Tokyo',
+      price: 18500,
+      prestigeBonus: 50,
+      looksBonus: 30,
+      isOwned: false,
+      isEquipped: false,
+      description: 'Тяжелая телячья кожа ручной выделки с серебряными кинжалами и крестами 925 пробы.'
+    },
+    {
+      id: 'brioni_tuxedo',
+      category: 'OUTFIT',
+      name: 'Brioni Bespoke Black Tie Tuxedo',
+      brand: 'Brioni Roma',
+      price: 24000,
+      prestigeBonus: 65,
+      looksBonus: 35,
+      isOwned: false,
+      isEquipped: false,
+      description: 'Шелковый смокинг ручного пошива для закрытых приемов в Монако и Цюрихе.'
+    },
+    // Accessories
+    {
+      id: 'gold_cuban_chain',
+      category: 'ACCESSORY',
+      name: 'Массивная цепь Miami Cuban Link 14K',
+      brand: 'Cartier Special Order',
+      price: 9500,
+      prestigeBonus: 25,
+      looksBonus: 15,
+      isOwned: true,
+      isEquipped: true,
+      description: 'Чистое золото, 250 грамм. Непререкаемый авторитет в GTA City и в Бане.'
+    },
+    {
+      id: 'patek_nautilus',
+      category: 'ACCESSORY',
+      name: 'Patek Philippe Nautilus 5711/1R Rose Gold',
+      brand: 'Patek Philippe Genève',
+      price: 145000,
+      prestigeBonus: 120,
+      looksBonus: 40,
+      isOwned: false,
+      isEquipped: false,
+      description: 'Розовое золото, шоколадный градиент циферблата. Священный Грааль часового мира.'
+    },
+    // Beards
+    {
+      id: 'clean_shaven',
+      category: 'BEARD',
+      name: 'Гладко выбрито (Hunter Jawline)',
+      brand: 'Truefitt & Hill London',
+      price: 50,
+      prestigeBonus: 5,
+      looksBonus: 10,
+      isOwned: true,
+      isEquipped: false,
+      description: 'Идеально гладкая кожа, акцентирующая угол нижней челюсти и скулы.'
+    },
+    {
+      id: 'chad_stubble',
+      category: 'BEARD',
+      name: '3-дневная щетина Chad Stubble',
+      brand: 'Royal Barber Club',
+      price: 100,
+      prestigeBonus: 10,
+      looksBonus: 15,
+      isOwned: true,
+      isEquipped: true,
+      description: 'Равномерная щетина 3 мм с окантовкой опасной бритвой. Добавляет брутальности и харизмы.'
+    }
+  ]
+};
+
+export const INITIAL_WEAPONS: WeaponItem[] = [
+  {
+    id: 'fist_strike',
+    name: 'Кулаки Моггера (Тяжелый удар)',
+    category: 'HEAVY',
+    price: 0,
+    damage: 35,
+    fireRate: 1.5,
+    ammo: 999,
+    maxAmmo: 999,
+    isOwned: true,
+    isEquipped: true,
+    tagline: 'Сокрушительный хук с поставленным ударом в спортзале Коча.'
+  },
+  {
+    id: 'deagle_50',
+    name: 'Пистолет Desert Eagle .50 AE Silver',
+    category: 'PISTOL',
+    price: 3200,
+    damage: 90,
+    fireRate: 2.2,
+    ammo: 42,
+    maxAmmo: 84,
+    isOwned: true,
+    isEquipped: false,
+    tagline: 'Крупнокалиберный израильский пистолет из полированной стали.'
+  },
+  {
+    id: 'golden_ak47',
+    name: 'Золотой Автомат Калашникова AK-47',
+    category: 'RIFLE',
+    price: 45000,
+    damage: 75,
+    fireRate: 8.5,
+    ammo: 180,
+    maxAmmo: 360,
+    isOwned: false,
+    isEquipped: false,
+    tagline: 'Инкрустирован золотом высшей пробы и ценным ореховым деревом.'
+  },
+  {
+    id: 'saiga_shotgun',
+    name: 'Тактический Дробовик Сайга-12К',
+    category: 'SHOTGUN',
+    price: 8500,
+    damage: 130,
+    fireRate: 2.0,
+    ammo: 48,
+    maxAmmo: 96,
+    isOwned: false,
+    isEquipped: false,
+    tagline: 'Огневая мощь ближнего боя. Убойная дробь Magnum.'
+  },
+  {
+    id: 'sniper_awp',
+    name: 'Снайперская Винтовка AWP Arctic',
+    category: 'SNIPER',
+    price: 28000,
+    damage: 220,
+    fireRate: 0.8,
+    ammo: 25,
+    maxAmmo: 50,
+    isOwned: false,
+    isEquipped: false,
+    tagline: 'Один выстрел — одна пораженная цель на дистанции в километр.'
+  }
+];
+
+export const INITIAL_ACHIEVEMENTS: AchievementItem[] = [
+  {
+    id: 'ach_first_steam',
+    title: '🧖‍♂️ Первый пар',
+    description: 'Посетите Русскую Баню и испытайте жар каменки.',
+    category: 'BANYA',
+    tier: 'BRONZE',
+    rewardCash: 5000,
+    rewardPrestige: 25,
+    isUnlocked: true,
+    unlockedAt: 'Ранее разблокировано',
+    progress: 1,
+    maxProgress: 1
+  },
+  {
+    id: 'ach_bratan_friend',
+    title: '🤝 Брат Коча',
+    description: 'Поговорите с легендарным Коч Братаном и прислушайтесь к совету.',
+    category: 'LIFESTYLE',
+    tier: 'BRONZE',
+    rewardCash: 10000,
+    rewardPrestige: 50,
+    isUnlocked: false,
+    progress: 0,
+    maxProgress: 1
+  },
+  {
+    id: 'ach_bench_100',
+    title: '🏋️ Жим 100 кг',
+    description: 'Пожмите сотку на скамье в спортзале Коча.',
+    category: 'GYM',
+    tier: 'SILVER',
+    rewardCash: 25000,
+    rewardPrestige: 100,
+    isUnlocked: false,
+    progress: 80,
+    maxProgress: 100
+  },
+  {
+    id: 'ach_mewing_streak',
+    title: '🗿 Mewing Master',
+    description: 'Удерживайте осанку языка и наберите стрик мьюинга 7 дней.',
+    category: 'LIFESTYLE',
+    tier: 'SILVER',
+    rewardCash: 35000,
+    rewardPrestige: 150,
+    isUnlocked: false,
+    progress: 3,
+    maxProgress: 7
+  },
+  {
+    id: 'ach_g_wagon',
+    title: '🚙 Гелик на районе',
+    description: 'Сядьте за руль легендарного Mercedes G63 AMG в 3D GTA мире.',
+    category: 'CARS',
+    tier: 'SILVER',
+    rewardCash: 50000,
+    rewardPrestige: 200,
+    isUnlocked: false,
+    progress: 0,
+    maxProgress: 1
+  },
+  {
+    id: 'ach_speed_300',
+    title: '⚡ Сверхзвук 300 км/ч',
+    description: 'Разгоните Bugatti Chiron до 300+ км/ч по проспекту Loox City.',
+    category: 'GTA',
+    tier: 'GOLD',
+    rewardCash: 100000,
+    rewardPrestige: 500,
+    isUnlocked: false,
+    progress: 0,
+    maxProgress: 300
+  },
+  {
+    id: 'ach_golden_ak',
+    title: '🔫 Золотой Калашников',
+    description: 'Приобретите золотой AK-47 в оружейном арсенале.',
+    category: 'GTA',
+    tier: 'GOLD',
+    rewardCash: 150000,
+    rewardPrestige: 600,
+    isUnlocked: false,
+    progress: 0,
+    maxProgress: 1
+  },
+  {
+    id: 'ach_ice_plunge',
+    title: '❄️ Ледяной Самурай',
+    description: 'Окунитесь в купель +4°C после 100-градусного парения веником.',
+    category: 'BANYA',
+    tier: 'SILVER',
+    rewardCash: 30000,
+    rewardPrestige: 120,
+    isUnlocked: false,
+    progress: 0,
+    maxProgress: 1
+  },
+  {
+    id: 'ach_apex_mogger',
+    title: '🗿 Apex Mogger Status',
+    description: 'Достигните 100 очков луксмаксинга и станьте абсолютным Моггером.',
+    category: 'LIFESTYLE',
+    tier: 'DIAMOND',
+    rewardCash: 1000000,
+    rewardPrestige: 5000,
+    isUnlocked: false,
+    progress: 24,
+    maxProgress: 100
+  },
+  {
+    id: 'ach_billionaire',
+    title: '💰 Первый Миллиард',
+    description: 'Накопите собственный капитал свыше $1,000,000,000.',
+    category: 'WEALTH',
+    tier: 'DIAMOND',
+    rewardCash: 5000000,
+    rewardPrestige: 10000,
+    isUnlocked: false,
+    progress: 250000,
+    maxProgress: 1000000000
+  }
+];
+
+export const KOCH_BRATAN_DIALOGS: KochBratanDialog[] = [
+  {
+    id: 'kb_intro',
+    speaker: 'Коч Братан',
+    text: 'Здорово, братуха! Вижу, ты настроен серьезно. Запомни: баня выгоняет шлаки и точит скулы, спортзал строит броню V-Taper, а бизнес дает свободу. Суетиться не надо — делай всё по базе!',
+    audioTone: 'hype'
+  },
+  {
+    id: 'kb_jawline',
+    speaker: 'Коч Братан',
+    text: 'Язык к нёбу держи прижатым, зубы сомкнуты, дыхание строго носом. Мьюинг — это не мода, это осанка черепа. Через месяц челюстью будешь консервные банки вскрывать.',
+    audioTone: 'wisdom'
+  },
+  {
+    id: 'kb_banya',
+    speaker: 'Коч Братан',
+    text: 'Сейчас на каменку поддадим эвкалипта, дубовым веником по спине пройдёмся, а потом сразу с головой в купель +4°C! Тестостерон в потолок взлетит, Hunter Eyes сами включатся.',
+    audioTone: 'pump'
+  },
+  {
+    id: 'kb_gym',
+    speaker: 'Коч Братан',
+    text: 'В зале главное не вес на штанге, а концентрация в мышце. Жми сотку с паузой, разводи гантели подконтрольно. Нормисы в зале сидят в телефонах, а мы куем величие.',
+    audioTone: 'pump'
+  },
+  {
+    id: 'kb_cars',
+    speaker: 'Коч Братан',
+    text: 'На Гелике или Бугатти по Loox City прокатись, азота поддай на прямой! Машина должна звучать как зверь и держать дорогу мертво. Но ауру держи спокойной — король не торопится.',
+    audioTone: 'hype'
+  }
+];
+
 

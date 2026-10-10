@@ -28,6 +28,10 @@ interface GTAWorld3DViewProps {
   onOpenLuxury: () => void;
   onOpenClub: () => void;
   onOpenTax: () => void;
+  onOpenGym?: () => void;
+  onOpenArmory?: () => void;
+  onOpenCustomization?: () => void;
+  onOpenKochBratan?: () => void;
   looksmaxing: LooksmaxingState;
   banya: BanyaState;
   cash: number;
@@ -55,6 +59,10 @@ export function GTAWorld3DView({
   onOpenLuxury,
   onOpenClub,
   onOpenTax,
+  onOpenGym,
+  onOpenArmory,
+  onOpenCustomization,
+  onOpenKochBratan,
   looksmaxing,
   banya,
   cash
@@ -453,6 +461,72 @@ export function GTAWorld3DView({
     scene.add(clubGroup);
 
     // -------------------------------------------------------------
+    // POI 7: 🏋️ GOLD'S GYM / КОЧ ЗАЛ
+    // -------------------------------------------------------------
+    const gymGroup = new THREE.Group();
+    gymGroup.position.set(0, 0, -65);
+    const gymBody = new THREE.Mesh(
+      new THREE.BoxGeometry(24, 10, 20),
+      new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.3 })
+    );
+    gymBody.position.y = 5;
+    gymBody.castShadow = true;
+    gymGroup.add(gymBody);
+    const gymSign = new THREE.Mesh(new THREE.BoxGeometry(16, 1.8, 0.4), new THREE.MeshBasicMaterial({ color: 0xeab308 }));
+    gymSign.position.set(0, 9.5, 10.2);
+    gymGroup.add(gymSign);
+    scene.add(gymGroup);
+
+    // -------------------------------------------------------------
+    // POI 8: 🔫 AMMU-NATION ARMORY
+    // -------------------------------------------------------------
+    const armoryGroup = new THREE.Group();
+    armoryGroup.position.set(-70, 0, 15);
+    const armoryBody = new THREE.Mesh(
+      new THREE.BoxGeometry(18, 9, 18),
+      new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.5 })
+    );
+    armoryBody.position.y = 4.5;
+    armoryBody.castShadow = true;
+    armoryGroup.add(armoryBody);
+    const armorySign = new THREE.Mesh(new THREE.BoxGeometry(14, 1.4, 0.4), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+    armorySign.position.set(0, 8.5, 9.2);
+    armoryGroup.add(armorySign);
+    scene.add(armoryGroup);
+
+    // -------------------------------------------------------------
+    // POI 9: 🗿 KOCH BRATAN 3D NPC (Next to Russian Banya)
+    // -------------------------------------------------------------
+    const kbNPC = new THREE.Group();
+    kbNPC.position.set(-28, 0, 28);
+    const kbTorso = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 1.3, 0.6),
+      new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.8 })
+    );
+    kbTorso.position.y = 1.65;
+    kbNPC.add(kbTorso);
+    const kbChain = new THREE.Mesh(
+      new THREE.TorusGeometry(0.35, 0.05, 8, 16),
+      new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.1 })
+    );
+    kbChain.position.set(0, 1.9, 0.32);
+    kbChain.rotation.x = Math.PI / 4;
+    kbNPC.add(kbChain);
+    const kbHead = new THREE.Mesh(
+      new THREE.BoxGeometry(0.65, 0.75, 0.65),
+      new THREE.MeshStandardMaterial({ color: 0xfbcfe8, roughness: 0.5 })
+    );
+    kbHead.position.y = 2.65;
+    kbNPC.add(kbHead);
+    const kbBadge = new THREE.Mesh(
+      new THREE.BoxGeometry(2.4, 0.5, 0.1),
+      new THREE.MeshBasicMaterial({ color: 0xf59e0b })
+    );
+    kbBadge.position.set(0, 3.4, 0);
+    kbNPC.add(kbBadge);
+    scene.add(kbNPC);
+
+    // -------------------------------------------------------------
     // 6. 3D DRIVEABLE LUXURY VEHICLES
     // -------------------------------------------------------------
     const vehicles: VehicleData[] = [];
@@ -553,9 +627,66 @@ export function GTAWorld3DView({
       };
     };
 
+    const create3DGWagon = (name: string, hexColor: number, startPos: THREE.Vector3, rotY: number) => {
+      const gCar = new THREE.Group();
+      gCar.position.copy(startPos);
+      gCar.rotation.y = rotY;
+
+      const bodyMat = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0.85, roughness: 0.25 });
+      const lower = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.25, 5.2), bodyMat);
+      lower.position.y = 0.95;
+      lower.castShadow = true;
+      gCar.add(lower);
+
+      const upper = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.15, 3.5), bodyMat);
+      upper.position.set(0, 2.0, -0.2);
+      upper.castShadow = true;
+      gCar.add(upper);
+
+      // Spare tire on tailgate
+      const spare = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.35, 16), new THREE.MeshStandardMaterial({ color: 0x111827 }));
+      spare.rotation.x = Math.PI / 2;
+      spare.position.set(0, 1.35, 2.7);
+      gCar.add(spare);
+
+      // Heavy AMG wheels
+      const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.9 });
+      const wheelGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.42, 16);
+      wheelGeo.rotateZ(Math.PI / 2);
+      [[-1.3, 0.55, 1.6], [1.3, 0.55, 1.6], [-1.3, 0.55, -1.6], [1.3, 0.55, -1.6]].forEach(([wx, wy, wz]) => {
+        const w = new THREE.Mesh(wheelGeo, wheelMat);
+        w.position.set(wx, wy, wz);
+        w.castShadow = true;
+        gCar.add(w);
+      });
+
+      // Xenon Headlights
+      const hl = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.1), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      hl.position.set(-0.85, 1.15, -2.61);
+      gCar.add(hl);
+      const hr = hl.clone();
+      hr.position.x = 0.85;
+      gCar.add(hr);
+
+      scene.add(gCar);
+      return {
+        mesh: gCar,
+        name,
+        color: '#' + hexColor.toString(16),
+        pos: gCar.position,
+        rotY,
+        speed: 0,
+        maxSpeed: 1.35,
+        accel: 0.024,
+        steerAngle: 0
+      };
+    };
+
     // Spawn fleet of luxury supercars
     vehicles.push(create3DSupercar('Bugatti Chiron Super Sport 300+', 0x1d4ed8, new THREE.Vector3(-6, 0, 10), 0));
+    vehicles.push(create3DGWagon('Mercedes-Benz G63 AMG V8 "Гелик"', 0x18181b, new THREE.Vector3(-14, 0, 12), 0));
     vehicles.push(create3DSupercar('Porsche 911 GT3 RS Shark Blue', 0x0284c7, new THREE.Vector3(6, 0, 10), Math.PI));
+    vehicles.push(create3DSupercar('BMW M5 CS Frozen Deep Green', 0x064e3b, new THREE.Vector3(14, 0, 12), Math.PI));
     vehicles.push(create3DSupercar('Ferrari SF90 XX Stradale Rosso', 0xdc2626, new THREE.Vector3(-6, 0, -20), 0));
     vehicles.push(create3DSupercar('Lamborghini Revuelto Verde', 0x84cc16, new THREE.Vector3(6, 0, -20), Math.PI));
     vehicles.push(create3DSupercar('Rolls-Royce Phantom VIII Gold', 0xb45309, new THREE.Vector3(-25, 0, 22), Math.PI / 2));
@@ -938,6 +1069,39 @@ export function GTAWorld3DView({
         return;
       }
 
+      // 8. 🗿 Koch Bratan NPC ((-28, 0, 28))
+      const kbDist = p.distanceTo(new THREE.Vector3(-28, 0, 28));
+      if (kbDist < 8 && onOpenKochBratan) {
+        setNearbyAction({
+          text: `[E] Поговорить с Коч Братаном 🗿`,
+          action: () => onOpenKochBratan(),
+          icon: '🗿'
+        });
+        return;
+      }
+
+      // 9. 🏋️ Gold's Gym ((0, 0, -65))
+      const gymDist = p.distanceTo(new THREE.Vector3(0, 0, -65));
+      if (gymDist < 16 && onOpenGym) {
+        setNearbyAction({
+          text: `[E] Войти в Gold’s Gym (Жим, Становая, V-Taper)`,
+          action: () => onOpenGym(),
+          icon: '🏋️'
+        });
+        return;
+      }
+
+      // 10. 🔫 Ammu-Nation ((-70, 0, 15))
+      const armoryDist = p.distanceTo(new THREE.Vector3(-70, 0, 15));
+      if (armoryDist < 16 && onOpenArmory) {
+        setNearbyAction({
+          text: `[E] Войти в Оружейный Арсенал (Золотой АК-47)`,
+          action: () => onOpenArmory(),
+          icon: '🔫'
+        });
+        return;
+      }
+
       // No prompt active
       setNearbyAction(null);
     };
@@ -1101,6 +1265,38 @@ export function GTAWorld3DView({
           >
             <span>🏎️</span> Автосалон
           </button>
+          {onOpenGym && (
+            <button
+              onClick={onOpenGym}
+              className="px-3 py-1.5 bg-blue-950/90 hover:bg-blue-900 border border-blue-500/50 rounded-xl text-xs font-bold text-blue-200 shadow-lg backdrop-blur transition active:scale-95 flex items-center gap-1"
+            >
+              <span>🏋️</span> Спортзал
+            </button>
+          )}
+          {onOpenArmory && (
+            <button
+              onClick={onOpenArmory}
+              className="px-3 py-1.5 bg-red-950/90 hover:bg-red-900 border border-red-500/50 rounded-xl text-xs font-bold text-red-200 shadow-lg backdrop-blur transition active:scale-95 flex items-center gap-1"
+            >
+              <span>🔫</span> Оружейная
+            </button>
+          )}
+          {onOpenKochBratan && (
+            <button
+              onClick={onOpenKochBratan}
+              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 border border-amber-400 rounded-xl text-xs font-black text-black shadow-lg backdrop-blur transition active:scale-95 flex items-center gap-1"
+            >
+              <span>🗿</span> Коч Братан
+            </button>
+          )}
+          {onOpenCustomization && (
+            <button
+              onClick={onOpenCustomization}
+              className="px-3 py-1.5 bg-purple-950/90 hover:bg-purple-900 border border-purple-500/50 rounded-xl text-xs font-bold text-purple-200 shadow-lg backdrop-blur transition active:scale-95 flex items-center gap-1"
+            >
+              <span>🛍️</span> Бутик
+            </button>
+          )}
         </div>
 
       </div>

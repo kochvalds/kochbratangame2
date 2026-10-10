@@ -1,6 +1,6 @@
 {
-  "name": "Looxmaksing Simulator 2",
-  "description": "Элитный симулятор бизнеса, инвестиций, суперкаров, футбольного клуба и предметов роскоши",
+  "name": "Луксмаксинг Симулятор 2",
+  "description": "3D GTA Открытый мир, Русская баня Коч Братана, автосимулятор с реальной физикой, спортзал, прокачка персонажа и бизнес-империи.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
