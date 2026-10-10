@@ -62,14 +62,20 @@ jobs:
       - name: Publish APK to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v2.5.0
-          name: "Looxmaksing Simulator 2 — Release v2.5.0 (Koch Bratan, Gold's Gym, G-Wagon, Armory & Save System)"
+          tag_name: v2.5.1
+          name: "Looxmaksing Simulator 2 — Release v2.5.1 (Black Screen Fix, WebViewAssetLoader, Koch Bratan & Full 3D)"
           body: |
-            ## 💎 Looxmaksing Simulator 2 (Release v2.5.0 — Коч Братан, Спортзал, Гелик, Оружейная & Сохранения) 🏎️🏋️🗿🧖‍♂️
+            ## 💎 Looxmaksing Simulator 2 (Release v2.5.1 — Фикс черного экрана, WebViewAssetLoader, 3D GTA) 🏎️🏋️🗿🧖‍♂️
             
-            Официальный релиз **LooxmaksingSimulator2.apk** на Kotlin / Jetpack Compose с полным арсеналом открытого 3D мира!
+            Официальный релиз **LooxmaksingSimulator2.apk** на Kotlin / Jetpack Compose с исправлением запуска и полной поддержкой Android WebView!
             
-            ### 🔥 Главные нововведения версии v2.5.0:
+            ### ⚡ Исправления в v2.5.1:
+            - 🛠️ **Полное устранение проблемы чёрного экрана**:
+              - Внедрён официальный `WebViewAssetLoader` с защищённым доменом `https://appassets.androidplatform.net/`.
+              - Добавлен нативный перехватчик потоков ресурсов с поддержкой ES-модулей, MIME-типов и WebGL.
+              - Встроен анимированный стартовый экран загрузки и перехватчик ошибок для мгновенного отклика при старте приложения.
+            
+            ### 🔥 Возможности игры:
             - 🗿 **Легендарный персонаж Коч Братан**:
               - Встреча в 3D мире рядом с баней и спортзалом.
               - Интерактивные диалоги, наставления по луксмаксингу, кодекс чести Mogger, аудио-реплики и персональные квесты.
